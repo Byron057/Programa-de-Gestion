@@ -1,2 +1,4 @@
 .env
 venv
+/services/__pycache__
+/views/__pycache__

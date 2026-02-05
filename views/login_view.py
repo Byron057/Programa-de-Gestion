@@ -37,10 +37,7 @@ def view_login(page: ft.Page):
                ingresar_codigo.error="Codigo incorrecto"
           else:
                page.pop_dialog()
-               page.show_dialog(ft.AlertDialog(
-                    open=True,
-                    bgcolor=ft.Colors.WHITE,
-                    title=ft.Text("Cambio de Contraseña",color=ft.Colors.BLACK,text_align="Center")))
+               cambio_contraseña()
           
      def proceso_recuperacion(e):
           global codigo
@@ -79,6 +76,19 @@ def view_login(page: ft.Page):
                          "Cancelar", on_click=lambda e: page.pop_dialog(),style=ft.ButtonStyle(color=ft.Colors.BLACK))],
                )          
           )
+     def cambio_contraseña():
+          page.show_dialog(ft.AlertDialog(
+                    open=True,
+                    bgcolor=ft.Colors.WHITE,
+                    title=ft.Text("Cambio de Contraseña",color=ft.Colors.BLACK,text_align="Center"),
+                    content= ft.Container(
+                         width=300,
+                         height=300,
+                         content=ft.Column([
+                              ft.Text("Ingresa tu Nueva Contraseña",color=ft.Colors.BLACK,text_align="Center"),
+                              ft.TextField("",color=ft.Colors.BLACK,border_color=ft.Colors.BLACK)])
+                         
+                    )))
      #Recursosque se utiliza en el contenedor principal del Login
      icon_principal=ft.Image(
           src="assets\logo_principal.png",

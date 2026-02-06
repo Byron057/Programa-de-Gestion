@@ -156,7 +156,4 @@ def view_login(page: ft.Page):
                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                spacing=50    
           )
-     )
-
-    
-     
+     ) 

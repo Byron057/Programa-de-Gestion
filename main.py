@@ -6,7 +6,4 @@ def main(page:ft.Page):
     page.theme_mode=ft.ThemeMode.DARK
     page.add(views.view_login(page))
     page.update()
-    
-
-
 ft.app(target=main)

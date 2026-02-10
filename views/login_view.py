@@ -30,7 +30,7 @@ def view_login(page: ft.Page):
                     password.error="Contraseña Incorrecta"
                else:
                     #Limpia la pagina(Agregar una animacion de cargando y exportar el dashboard)
-                    views.hola(page)
+                    views.view_dashboard(page)
      def verificacion_email():
           codigo1="123"
           if ingresar_codigo.value != codigo1:

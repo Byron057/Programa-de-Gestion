@@ -2,3 +2,5 @@
 venv
 /services/__pycache__
 /views/__pycache__
+gestion.db
+gestion.sqbpro

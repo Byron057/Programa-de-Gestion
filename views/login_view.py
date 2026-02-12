@@ -1,16 +1,9 @@
 import flet as ft
 from decouple import config
 import services
+import asyncio
 import views
 def view_login(page: ft.Page):
-     page.vertical_alignment="center"
-     page.horizontal_alignment="center"
-     page.bgcolor=ft.Colors.TRANSPARENT
-     page.decoration=ft.BoxDecoration(
-          image=ft.DecorationImage(
-          src="assets/fondo_login.jpg",
-          fit=ft.BoxFit.COVER)
-     )
      #Funcion para validar datos registrados en el archivo .env
      def login_principal():
           #Iniciar los errores en None para no tener conflictos
@@ -29,8 +22,7 @@ def view_login(page: ft.Page):
                elif password.value!=config("Password"):
                     password.error="Contraseña Incorrecta"
                else:
-                    #Limpia la pagina(Agregar una animacion de cargando y exportar el dashboard)
-                    views.view_dashboard(page)
+                    asyncio.create_task(page.push_route("/dashboard"))
      def verificacion_email():
           codigo1="123"
           if ingresar_codigo.value != codigo1:
@@ -135,7 +127,17 @@ def view_login(page: ft.Page):
      )
 
      #Contenedor principal Login se Returna para llamar en el archivo main.py
-     return ft.Container(
+     return ft.View( 
+          route="/",
+          vertical_alignment="center",
+          horizontal_alignment="center",
+          bgcolor=ft.Colors.TRANSPARENT,
+          decoration=ft.BoxDecoration(
+          image=ft.DecorationImage(
+          src="assets/fondo_login.jpg",
+          fit=ft.BoxFit.COVER)),
+          controls=[
+          ft.Container(
           #Caracteristicas del Coontenedror
           width=500,
           height=700,
@@ -154,6 +156,4 @@ def view_login(page: ft.Page):
                #Posicion y alineación  de los widgets 
                alignment= ft.MainAxisAlignment.CENTER,
                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-               spacing=50    
-          )
-     ) 
+               spacing=50))])

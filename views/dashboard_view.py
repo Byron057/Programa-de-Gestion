@@ -8,13 +8,17 @@ def view_dashboard(page: ft.Page):
         route="/dashboard",
         bgcolor=ft.Colors.WHITE,
         controls=[
-            ft.Container(
-                width=300,
-                height=300,
-                bgcolor=ft.Colors.AMBER
-            ),
-            ft.Button(
-                "Regresar", on_click= lambda: asyncio.create_task(page.push_route("/"))
+            ft.AppBar(
+                title=ft.Text("Hola",color=ft.Colors.BLUE_GREY_400),
+                bgcolor=ft.Colors.GREY_200,
+                actions=[
+                ft.IconButton(ft.Icons.WB_SUNNY_OUTLINED),
+                ft.IconButton(ft.Icons.FILTER_3),
+            ]
+                
+            
+                
             )
         ]
     )
+    

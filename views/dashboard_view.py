@@ -8,24 +8,16 @@ def view_dashboard(page: ft.Page):
         route="/dashboard",
         bgcolor=ft.Colors.WHITE,
         controls=[
-            ft.AppBar(
-                title=ft.Text("Hola",color=ft.Colors.BLUE_GREY_800),
-                bgcolor=ft.Colors.GREY_200,
-                actions=[
-                ft.IconButton(
-                    ft.Icons.WB_SUNNY_OUTLINED,
-                    icon_color=ft.Colors.BLUE_GREY_800
-                ),
-                
-                ft.IconButton(ft.Icons.FILTER_3
-                
-                )]    
-            ),
+            ft.Row(
+            [
             ft.Container(
-                width=250,
-                height=800,
-                bgcolor=ft.Colors.AMBER
-            )
-        ]
+                expand=1,
+                bgcolor=ft.Colors.ORANGE_300
+            ),
+            ft.VerticalDivider(),
+            ],
+            width=400,
+            height=800
+        )]
     )
     

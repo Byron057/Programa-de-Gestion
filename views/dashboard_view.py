@@ -8,31 +8,18 @@ def view_dashboard(page: ft.Page):
         route="/dashboard",
         bgcolor=ft.Colors.WHITE,
         controls=[
-            ft.Row(
-            [
-            ft.AppBar(
-                title=ft.Text("Hola",color=ft.Colors.BLUE_GREY_800),
-                bgcolor=ft.Colors.GREY_200,
-                actions=[
-                ft.IconButton(
-                    ft.Icons.WB_SUNNY_OUTLINED,
-                    icon_color=ft.Colors.BLUE_GREY_800
-                ),
-                
-                ft.IconButton(ft.Icons.FILTER_3
-                
-                )]    
+            ft.NavigationRail(
+
+        label_type=ft.NavigationRailLabelType.ALL,
+        destinations=[
+            ft.NavigationRailDestination(
+                icon=ft.Icons.DIRECTIONS_CAR, 
+                label="Vehículos"
             ),
-            ft.Divider(),
-            ft.Container(
-                expand=1,
-                bgcolor=ft.Colors.ORANGE_300
+            ft.NavigationRailDestination(
+                icon=ft.Icons.SETTINGS, 
+                label="Configuración"
             ),
-            ft.VerticalDivider(),
-    
-            ],
-            width=400,
-            height=800
-        )]
+        ]
     )
-    
+        ])

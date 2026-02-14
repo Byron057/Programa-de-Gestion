@@ -31,12 +31,12 @@ def view_dashboard(page: ft.Page):
         controls=[
             ft.Container(
                 width=300,
-                height=100,
+                height=70,
                 bgcolor=ft.Colors.INDIGO_900,
                 content=ft.Row( 
                     controls=[
-                        ft.Icon(ft.Icons.SETTINGS_SHARP,size=60),
-                        ft.Text("Gestión Mecánica",size=20,weight=ft.FontWeight.W_800)
+                        ft.Icon(ft.Icons.SETTINGS_SHARP,size=50),
+                        ft.Text("Gestión Mecánica",size=25,weight=ft.FontWeight.W_700)
                     ]
                 )
             ),
@@ -51,11 +51,13 @@ def view_dashboard(page: ft.Page):
                         bgcolor=ft.Colors.BLUE_900,
                         selected_label_text_style=ft.TextStyle(color=ft.Colors.WHITE, weight=ft.FontWeight.BOLD),
                         unselected_label_text_style=ft.TextStyle(color=ft.Colors.GREY_400),
+                        indicator_color=ft.Colors.GREEN,
                         indicator_shape=ft.RoundedRectangleBorder(radius=5),
                         destinations=[
                             ft.NavigationRailDestination(
                                 icon=ft.Icons.HOUSE,
-                                label="Inicio"
+                                label="Inicio",
+                                
                             ),
                             ft.NavigationRailDestination(
                                 icon=ft.Icons.FAVORITE_BORDER,

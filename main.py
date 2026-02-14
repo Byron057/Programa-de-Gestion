@@ -8,7 +8,7 @@ def main(page:ft.Page):
     page.theme_mode=ft.ThemeMode.DARK
     def route_change():
         page.views.clear()
-        page.views.append(views.view_login(page))
+        page.views.append(views.view_dashboard(page))#cambiar entre login y dashboard cuando sea necesario
         if page.route=="/dashboard":
             page.views.append(views.view_dashboard(page))
         page.update()

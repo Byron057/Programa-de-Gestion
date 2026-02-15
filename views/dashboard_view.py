@@ -1,7 +1,7 @@
 import flet as ft
 
 def view_dashboard(page: ft.Page):
-    
+    page.theme_mode=ft.ThemeMode.LIGHT
     barra_superior_derecha = ft.Container(
         height=60, # Altura fija para la barra
         bgcolor=ft.Colors.BLUE_GREY_50, # Un gris muy clarito o blanco

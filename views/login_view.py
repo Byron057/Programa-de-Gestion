@@ -4,6 +4,7 @@ import services
 import asyncio
 import views
 def view_login(page: ft.Page):
+     page.theme_mode=ft.ThemeMode.DARK
      #Funcion para validar datos registrados en el archivo .env
      def login_principal():
           #Iniciar los errores en None para no tener conflictos
@@ -90,23 +91,15 @@ def view_login(page: ft.Page):
      text=ft.Text(
           "Iniciar Sesión",
           size=35,
-          weight="w500",
-          color=ft.Colors.WHITE
+          weight="w500"    
      )
      email=ft.TextField(
           label= "Correo",
-          label_style=ft.TextStyle(
-               color=ft.Colors.BLACK, 
-               weight="w500"
-          ),
+          label_style=ft.TextStyle(color=ft.Colors.BLACK, weight="w500"),
           border_color=ft.Colors.BLACK,
           width= 300,
           color=ft.Colors.BLACK,
-          prefix_icon=ft.Icon(
-               ft.Icons.EMAIL,
-               color=ft.Colors.WHITE
-          ),
-          error_style=ft.TextStyle(color=ft.Colors.RED)
+          prefix_icon=ft.Icons.EMAIL   
      )
      password= ft.TextField(
           label="Conraseña",
@@ -114,17 +107,10 @@ def view_login(page: ft.Page):
           border_color=ft.Colors.BLACK, 
           width=300,
           color=ft.Colors.BLACK,
-          prefix_icon=ft.Icon(
-               ft.Icons.LOCK,
-               color=ft.Colors.WHITE
-          ),
-          error_style=ft.TextStyle(color=ft.Colors.RED)
+          prefix_icon=ft.Icons.LOCK   
      )
      Boton=ft.ElevatedButton(
-          content= ft.Text(
-               "Iniciar Sesión",
-               color=ft.Colors.WHITE),
-          bgcolor=ft.Colors.BLACK,
+          content= ft.Text("Iniciar Sesión"),
           on_click=login_principal
           
      )

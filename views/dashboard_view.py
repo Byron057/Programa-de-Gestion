@@ -1,42 +1,63 @@
 import flet as ft
-
+import asyncio
+import views
 def view_dashboard(page: ft.Page):
-    page.theme_mode=ft.ThemeMode.LIGHT
     barra_superior_derecha = ft.Container(
         height=60, # Altura fija para la barra
         bgcolor=ft.Colors.BLUE_GREY_50, # Un gris muy clarito o blanco
         padding=ft.padding.symmetric(horizontal=20),
         content=ft.Row(
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN, # Empuja el título a la izq y el botón a la der
+            alignment=ft.MainAxisAlignment.END, # Empuja el título a la izq y el botón a la der
             controls=[
-                ft.Text(
-                    "Panel de Administración", 
-                    size=18, weight="bold", 
-                    color=ft.Colors.BLACK87
+                ft.Icon(
+                    icon=ft.Icons.ACCOUNT_CIRCLE,
+                    color=ft.Colors.BLACK_45, 
+                    tooltip="Admin"
                 ),
-                ft.IconButton(
-                    icon=ft.Icons.LOGOUT, 
-                    icon_color=ft.Colors.RED_700, 
-                    tooltip="Cerrar Sesión"
+                ft.Text("Byron Velastegui  |",color=ft.Colors.BLACK),
+                ft.PopupMenuButton(
+                    icon=ft.Icon(ft.Icons.NOTIFICATIONS,color=ft.Colors.BLACK),
+                    bgcolor=ft.Colors.WHITE,
+                    tooltip="Notificaciones",
+                    items=[
+                        ft.PopupMenuItem(
+                            ft.Text("Notificación de Prueba",color=ft.Colors.BLACK),
+                            disabled=True
+                            
+                        )
+                    ]
+                ),
+                ft.PopupMenuButton(
+                    icon=ft.Icon(ft.Icons.MORE_VERT_ROUNDED, color=ft.Colors.BLACK),
+                    bgcolor=ft.Colors.WHITE,
+                    items=[
+                        ft.PopupMenuItem(
+                            ft.Text("Acerca de",color=ft.Colors.BLACK)
+                        ),
+                        ft.PopupMenuItem(
+                            ft.Text("Configuración",color=ft.Colors.BLACK)
+                        )
+                        # Aquí puedes agregar más opciones fácilmente
+                    ]
                 )
+                
             ]
         )
     )
     
     # Contenedor principal, va cambiando segun el menu
     cuerpo_contenido = ft.Column(
-        #el contenido debe ser igual que el del indice 0
-        ft.Text(
-            "Pantalla de Inicio",
-            size=25
+        expand=True,
+        controls=(
+            views.view_inicio(page)
         )
     )
     
     columna_derecha = ft.Column(
         expand=True, # Esto hace que ocupe todo el ancho sobrante de la derecha
-        spacing=0,   # Cero espacio entre la barra y el contenido
+        spacing=0,# Cero espacio entre la barra y el contenido
         controls=[
-            barra_superior_derecha, # La barra fija arriba
+            barra_superior_derecha,# La barra fija arriba
             cuerpo_contenido        # El contenido dinámico abajo (que también debe tener expand=True)
         ]
     )
@@ -58,10 +79,7 @@ def view_dashboard(page: ft.Page):
         #Cambia solo el contenido de cuerpo contenido(es necesario acceder con .controls[])
         if indice == 0:
             cuerpo_contenido.controls = [
-                ft.Text(
-                    "Pantalla de Inicio",
-                    size=25
-                    ),
+                views.view_inicio(page)
             ]
         elif indice == 1:
             cuerpo_contenido.controls = [
@@ -73,10 +91,12 @@ def view_dashboard(page: ft.Page):
         elif indice == 2:
             cuerpo_contenido.controls = [
                 ft.Text(
-                    "Pantalla de Clientes", 
+                    "Pantalla de Repuestos", 
                     size=25
                 )
-            ]
+            ]#Se creara diferentes archivos para cada apartado
+        elif indice == 3:
+           cuerpo_contenido.controls = []
         
         #Se llama a esta funcion para que se actualice de la pantalla
         actualizar_menu()
@@ -109,7 +129,8 @@ def view_dashboard(page: ft.Page):
         columna_botones.controls = [
             crear_boton(0, ft.Icons.HOUSE, "Inicio"),
             crear_boton(1, ft.Icons.CAR_REPAIR, "Reparaciones"),
-            crear_boton(2, ft.Icons.PEOPLE, "Clientes"),
+            crear_boton(2, ft.Icons.INVENTORY, "Repuestos"),
+            crear_boton(3, ft.Icons.PEOPLE, "Clientes"),
         ]
     
     # Dibujamos el menú por primera vez al cargar la pantalla
@@ -123,13 +144,36 @@ def view_dashboard(page: ft.Page):
             controls=[
                 # ENcabezado
                 ft.Container(
-                    height=80, 
+                    height=60, 
                     bgcolor=ft.Colors.INDIGO_900,
                     alignment=ft.Alignment.CENTER,
-                    content=ft.Text("TALLER MECÁNICO", color=ft.Colors.WHITE, weight="bold")
+                    content=ft.Row( 
+                    controls=[
+                        ft.Icon(ft.Icons.SETTINGS_SHARP,size=45,color=ft.Colors.WHITE),
+                        ft.Text("Gestión Mecánica",size=20,color=ft.Colors.WHITE,weight="w500")
+                    ]
+                )
+
                 ),
                 # Los botones dinámicos
-                columna_botones
+                columna_botones,
+                ft.Container(expand=True),#Mtodo Resorte
+                ft.Divider(),
+                ft.Container(
+                    content=ft.Row(
+                        controls=[
+                            ft.Icon(ft.Icons.LOGOUT, color=ft.Colors.WHITE, size=24),
+                            ft.Text("Cerrar Sesion", color=ft.Colors.WHITE, size=15, weight=ft.FontWeight.BOLD)
+                        ],
+                        alignment=ft.MainAxisAlignment.START
+                    ),
+                    bgcolor=ft.Colors.TRANSPARENT,
+                    padding=ft.padding.symmetric(vertical=15, horizontal=20),
+                    ink=True,
+                    on_click= lambda e: asyncio.create_task(page.push_route("/"))
+                            
+                            
+                )
             ],
             spacing=0 # Sin espacios para que las franjas se toquen
         )

@@ -49,7 +49,6 @@ def view_dashboard(page: ft.Page):
                         width=300,
                         extended=True, # Si es True, muestra nombres largos
                         bgcolor=ft.Colors.BLUE_900,
-                        group_alignment=ft.MainAxisAlignment.START,
                         selected_label_text_style=ft.TextStyle(
                             color=ft.Colors.WHITE, 
                             weight=ft.FontWeight.BOLD,

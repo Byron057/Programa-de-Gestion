@@ -3,28 +3,30 @@ import flet as ft
 def view_inicio(page: ft.Page):
     return ft.Container(
             expand=True,
-            bgcolor=ft.Colors.WHITE, # Fondo general oscuro
+            bgcolor=ft.Colors.WHITE, 
             padding=20,
-            content=ft.Column( # 1. La Columna principal que organiza TODO el contenido
+            content=ft.Column( 
                 controls=[
-                    # Título de la sección
-                    ft.Text("Gestión de Clientes", size=30, weight="bold", color=ft.Colors.WHITE),
-                    
+                    ft.Text("Gestión de Clientes", size=30, weight="bold", color=ft.Colors.BLACK),
                     ft.Divider(height=10, color=ft.Colors.TRANSPARENT), # Espaciador
-                    
-                    # 2. Aquí puedes meter una FILA para poner varios cuadrados
                     ft.Row(
-                        scroll=ft.ScrollMode.AUTO, # Por si pones muchos
+                        scroll=ft.ScrollMode.AUTO, 
                         controls=[
-                            # Cuadrado 1
                             ft.Container(
-                                width=200, height=150, 
+                                width=200, 
+                                height=150, 
                                 bgcolor=ft.Colors.AMBER, 
                                 border_radius=10,
-                                content=ft.Column([
+                                on_click= lambda e: print("Hola mundo"),
+                                ink=True,
+                                content=ft.Column(
+                                    [
                                     ft.Icon(ft.Icons.PERSON, color=ft.Colors.BLACK),
                                     ft.Text("Nuevo Cliente", color=ft.Colors.BLACK)
-                                ], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+                                    ], 
+                                    alignment=ft.MainAxisAlignment.CENTER, 
+                                    horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                                )
                             ),
                             # Cuadrado 2
                             ft.Container(

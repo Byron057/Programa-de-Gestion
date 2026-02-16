@@ -4,3 +4,4 @@ venv
 /views/__pycache__
 gestion.db
 gestion.sqbpro
+prueba.py

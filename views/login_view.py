@@ -4,6 +4,7 @@ import services
 import asyncio
 import views
 def view_login(page: ft.Page):
+     page.theme_mode=ft.ThemeMode.DARK
      #Funcion para validar datos registrados en el archivo .env
      def login_principal():
           #Iniciar los errores en None para no tener conflictos

@@ -5,7 +5,6 @@ import views
 def main(page:ft.Page):
     page.title="Gestion"
     page.window.maximized=True
-    page.theme_mode=ft.ThemeMode.DARK
     def route_change():
         page.views.clear()
         page.views.append(views.view_login(page))#cambiar entre login y dashboard cuando sea necesario

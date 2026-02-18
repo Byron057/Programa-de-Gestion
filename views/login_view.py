@@ -103,6 +103,8 @@ def view_login(page: ft.Page):
      )
      password= ft.TextField(
           label="Conraseña",
+          password=True,
+          can_reveal_password=True,
           label_style=ft.TextStyle(color=ft.Colors.BLACK, weight="w500"),
           border_color=ft.Colors.BLACK, 
           width=300,

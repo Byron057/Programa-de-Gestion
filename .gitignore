@@ -2,7 +2,7 @@
 venv
 /services/__pycache__
 /views/__pycache__
-/models/__pycache__
 gestion.db
 gestion.sqbpro
 prueba.py
+/models/__pycache__

@@ -8,10 +8,10 @@ def view_inicio(page: ft.Page):
             content=ft.Column( 
                 controls=[
                     Text("Mecánica Automotriz Velastegui",60,ft.Colors.BLACK,"w900"),
-                    ft.Divider(height=10, color=ft.Colors.TRANSPARENT), # Espaciador
+                    ft.Divider(height=10, color=ft.Colors.BLACK), # Espaciador
                     ft.Column(
                         controls=[
-                            Text("Resumen General",24, ft.Colors.BLACK),
+                            Text("Resumen General",30, ft.Colors.BLACK),
                             ft.Row(
                                 controls=[
                                     ft.Container(

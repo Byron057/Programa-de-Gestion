@@ -93,6 +93,14 @@ def view_dashboard(page: ft.Page):
            cuerpo_contenido.controls = [
                views.view_reparaciones(page)
            ]
+        elif indice == 4:
+            cuerpo_contenido.controls=[
+                views.view_repuestos(page)
+            ]
+        elif indice == 5:
+            cuerpo_contenido.controls=[
+                views.view_personal(page)
+            ]
         
         #Se llama a esta funcion para que se actualice de la pantalla
         actualizar_menu()

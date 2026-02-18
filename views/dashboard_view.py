@@ -130,7 +130,9 @@ def view_dashboard(page: ft.Page):
             crear_boton(0, ft.Icons.HOUSE, "Inicio"),
             crear_boton(1, ft.Icons.CAR_REPAIR, "Reparaciones"),
             crear_boton(2, ft.Icons.INVENTORY, "Repuestos"),
-            crear_boton(3, ft.Icons.PEOPLE, "Clientes"),
+            crear_boton(3, ft.Icons.GROUPS, "Clientes"),
+            crear_boton(4, ft.Icons.PERSON, "Personal"),
+            crear_boton(5, ft.Icons.DIRECTIONS_CAR, "Vehiculos")
         ]
     
     # Dibujamos el menú por primera vez al cargar la pantalla
@@ -157,7 +159,7 @@ def view_dashboard(page: ft.Page):
                 ),
                 # Los botones dinámicos
                 columna_botones,
-                ft.Container(expand=True),#Mtodo Resorte
+                ft.Container(expand=True),#Metodo Resorte
                 ft.Divider(),
                 ft.Container(
                     content=ft.Row(

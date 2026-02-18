@@ -43,10 +43,53 @@ def view_inicio(page: ft.Page):
                                                                 horizontal_alignment=ft.CrossAxisAlignment.START,
                                                                 spacing=0,
                                                                 controls=[
-                                                                    Text("Clientes",22,ft.Colors.WHITE,0),
-                                                                    Text("Registrados",17,ft.Colors.WHITE,0),
+                                                                    Text("Clientes",22,ft.Colors.WHITE),
+                                                                    Text("Registrados",17,ft.Colors.WHITE),
                                                                 ]
                                                             )
+                                                        ]
+                                                    )
+                                                )
+                                            ]
+                                        )
+                                    ),
+                                    ft.Container(
+                                        width=200,
+                                        height=150,
+                                        padding=0,
+                                        border_radius=10,
+                                        content=ft.Column(
+                                            spacing=0,
+                                            controls=[
+                                                ft.Container(
+                                                    bgcolor=ft.Colors.AMBER_800,
+                                                    alignment=ft.Alignment.CENTER,
+                                                    width=200,
+                                                    height=85,
+                                                    content=Icon(ft.Icons.INVENTORY,ft.Colors.WHITE,80)
+                                                ),
+                                                ft.Container(
+                                                    bgcolor=ft.Colors.AMBER_900,
+                                                    alignment=ft.Alignment.CENTER,
+                                                    width=200,
+                                                    height=65,
+                                                    content=ft.Row(
+                                                        alignment=ft.MainAxisAlignment.CENTER,
+                                                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                                                        controls=[
+                                                            Text("50",45,ft.Colors.WHITE,"bold"),
+                                                            ft.Column(
+                                                            spacing=0,
+                                                            controls=[
+                                                            ft.Column(
+                                                                spacing=0,
+                                                                controls=[
+                                                                    Text("Productos",22,ft.Colors.WHITE),
+                                                                    Text("Registrados",17,ft.Colors.WHITE),
+                                                                ]
+                                                            )
+                                                        ]
+                                                    )
                                                         ]
                                                     )
                                                 )

@@ -83,10 +83,7 @@ def view_dashboard(page: ft.Page):
             ]
         elif indice == 1:
             cuerpo_contenido.controls = [
-                ft.Text(
-                    "Pantalla de Reparaciones", 
-                    size=25
-                )
+               views.view_reparaciones(page)
             ]#Se creara diferentes archivos para cada apartado
         elif indice == 2:
             cuerpo_contenido.controls = [
@@ -128,11 +125,11 @@ def view_dashboard(page: ft.Page):
     def actualizar_menu():
         columna_botones.controls = [
             crear_boton(0, ft.Icons.HOUSE, "Inicio"),
-            crear_boton(1, ft.Icons.CAR_REPAIR, "Reparaciones"),
-            crear_boton(2, ft.Icons.INVENTORY, "Repuestos"),
-            crear_boton(3, ft.Icons.GROUPS, "Clientes"),
-            crear_boton(4, ft.Icons.PERSON, "Personal"),
-            crear_boton(5, ft.Icons.DIRECTIONS_CAR, "Vehiculos")
+            crear_boton(1, ft.Icons.GROUPS, "Clientes"),
+            crear_boton(2, ft.Icons.DIRECTIONS_CAR, "Vehiculos"),
+            crear_boton(3, ft.Icons.CAR_REPAIR, "Reparaciones"),
+            crear_boton(4, ft.Icons.INVENTORY, "Repuestos"),
+            crear_boton(5, ft.Icons.PERSON, "Personal")
         ]
     
     # Dibujamos el menú por primera vez al cargar la pantalla

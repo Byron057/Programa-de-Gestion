@@ -48,9 +48,9 @@ def view_dashboard(page: ft.Page):
     # Contenedor principal, va cambiando segun el menu
     cuerpo_contenido = ft.Column(
         expand=True,
-        controls=(
+        controls=[
             views.view_inicio(page)
-        )
+        ]
     )
     
     columna_derecha = ft.Column(
@@ -83,17 +83,16 @@ def view_dashboard(page: ft.Page):
             ]
         elif indice == 1:
             cuerpo_contenido.controls = [
-               views.view_reparaciones(page)
+               views.view_clientes(page)
             ]#Se creara diferentes archivos para cada apartado
         elif indice == 2:
             cuerpo_contenido.controls = [
-                ft.Text(
-                    "Pantalla de Repuestos", 
-                    size=25
-                )
+               views.view_vehiculos(page)
             ]#Se creara diferentes archivos para cada apartado
         elif indice == 3:
-           cuerpo_contenido.controls = []
+           cuerpo_contenido.controls = [
+               views.view_reparaciones(page)
+           ]
         
         #Se llama a esta funcion para que se actualice de la pantalla
         actualizar_menu()

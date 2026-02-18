@@ -3,11 +3,11 @@ from models import *
 def view_inicio(page: ft.Page):
     return ft.Container(
             expand=True,
-            bgcolor=ft.Colors.WHITE, 
+            bgcolor=ft.Colors.WHITE,
             padding=20,
             content=ft.Column( 
                 controls=[
-                    Text("Mecánica Automotriz Velastegui",70,ft.Colors.BLACK,"w900"),
+                    Text("Mecánica Automotriz Velastegui",60,ft.Colors.BLACK,"w900"),
                     ft.Divider(height=10, color=ft.Colors.TRANSPARENT), # Espaciador
                     ft.Column(
                         controls=[

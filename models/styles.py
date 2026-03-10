@@ -7,7 +7,7 @@ class Icon(ft.Icon):
         self.size=size
         
 class Text(ft.Text):
-    def __init__(self, text, size,color=None , weight=None,height=None):
+    def __init__(self, text, size=None,color=None , weight=None,height=None):
         super().__init__()
         self.value=text
         self.color=color

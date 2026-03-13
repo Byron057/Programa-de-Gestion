@@ -11,7 +11,7 @@ def view_vehiculos(page: ft.Page):
             controls=[
                 Text("Pantalla de Vehiculos",40,ft.Colors.BLACK),
                 ft.Divider(height=10,color=ft.Colors.TRANSPARENT),
-                ft.Button("prueba", on_click= Form_global(page))
+                ft.Button("prueba", on_click= lambda e: Form_global(page))
             ]
         )
     )

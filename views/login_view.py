@@ -82,17 +82,30 @@ def view_login(page: ft.Page):
                               ft.TextField("",color=ft.Colors.BLACK,border_color=ft.Colors.BLACK)])
                          
                     )))
-     #Recursosque se utiliza en el contenedor principal del Login
      def toggle_password(e):
         password.password = not password.password
-        
-        if password.password:
-            password.suffix.icon = ft.Icons.VISIBILITY_OFF # Oculta = Tachado
-        else:
-            password.suffix.icon = ft.Icons.VISIBILITY     # Visible = Abierto
-            
+        boton_ojo.icon = ft.Icons.VISIBILITY_OFF if password.password else ft.Icons.VISIBILITY
         page.update()
-        
+
+     def mostrar_ojo(e):
+        boton_ojo.icon_color = ft.Colors.BLACK
+        boton_ojo.disabled = False
+        page.update()
+
+     def ocultar_ojo(e):
+        boton_ojo.icon_color = ft.Colors.TRANSPARENT
+        boton_ojo.disabled = True
+        password.password = True
+        boton_ojo.icon = ft.Icons.VISIBILITY_OFF
+        page.update()
+     
+     boton_ojo = ft.IconButton(
+        icon=ft.Icons.VISIBILITY_OFF,
+        icon_color=ft.Colors.TRANSPARENT,
+        disabled=True,
+        on_click=toggle_password
+    )
+     
      icon_principal=ft.Image(
           src="assets\logo_principal.png",
           width=120,
@@ -107,28 +120,21 @@ def view_login(page: ft.Page):
           label= "Correo",
           label_style=ft.TextStyle(color=ft.Colors.BLACK, weight="w500"),
           border_color=ft.Colors.BLACK,
-          width= 300,
           color=ft.Colors.BLACK,
           prefix_icon=ft.Icons.EMAIL   
      )
      password = ft.TextField(
         label="Contraseña",
-        password=True,
-        dense=True, # 1. ESTO HACE QUE EL CAMPO SEA MÁS COMPACTO
-        suffix=ft.IconButton(
-            icon=ft.Icons.VISIBILITY_OFF, 
-            on_click=toggle_password,
-            icon_color=ft.Colors.BLACK,
-            width=35,      # 3. Le damos un ancho fijo pequeño al botón
-            height=34,     # 4. Le damos un alto fijo pequeño al botón
-            style=ft.ButtonStyle(padding=0) # 5. Le quitamos el relleno invisible
-        ),
         label_style=ft.TextStyle(color=ft.Colors.BLACK, weight="w500"),
-        border_color=ft.Colors.BLACK, 
-        width=300,
+        border_color=ft.Colors.BLACK,
+        prefix_icon=ft.Icons.LOCK,  
+        password=True,
         color=ft.Colors.BLACK,
-        prefix_icon=ft.Icon(ft.Icons.LOCK, size=25)
+        suffix_icon=boton_ojo,
+        on_focus=mostrar_ojo,
+        on_blur=ocultar_ojo
     )
+
      Boton=ft.ElevatedButton(
           content= ft.Text("Iniciar Sesión"),
           on_click=login_principal

@@ -5,4 +5,6 @@ venv
 gestion.db
 gestion.sqbpro
 prueba.py
+prueba1.py
 /models/__pycache__
+clientes.py

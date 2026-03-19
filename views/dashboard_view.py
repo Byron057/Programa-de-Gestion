@@ -134,7 +134,6 @@ def view_dashboard(page: ft.Page):
             crear_boton(0, ft.Icons.HOUSE, "Inicio"),
             crear_boton(1, ft.Icons.GROUPS, "Clientes"),
             crear_boton(2, ft.Icons.DIRECTIONS_CAR, "Vehiculos"),
-            crear_boton(3, ft.Icons.CAR_REPAIR, "Reparaciones"),
             crear_boton(4, ft.Icons.INVENTORY, "Repuestos"),
             crear_boton(5, ft.Icons.PERSON, "Personal")
         ]
@@ -201,3 +200,5 @@ def view_dashboard(page: ft.Page):
             )
         ]
     )
+    
+#agregar funcion de notoficaiones, configuracion, datos del usuario

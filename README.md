@@ -1,45 +1,52 @@
-# 🔧 Sistema de Gestión para Taller Mecánico (Inicios)
+# 🔧 Sistema de Gestión para Taller Automotriz
 
 ![Python](https://img.shields.io/badge/Python-3.x-blue?style=for-the-badge&logo=python&logoColor=white)
 ![Flet](https://img.shields.io/badge/Flet-UI-purple?style=for-the-badge)
-![Status](https://img.shields.io/badge/Estado-Prototipo_Inicial-orange?style=for-the-badge)
+![SQLite](https://img.shields.io/badge/SQLite-Database-lightgrey?style=for-the-badge&logo=sqlite)
+![Status](https://img.shields.io/badge/Estado-Desarrollo_Activo-success?style=for-the-badge)
 
-¡Hola! Bienvenido al repositorio de mi primer proyecto de desarrollo de software.
+¡Hola! Bienvenido al repositorio de mi primer proyecto de desarrollo de software a gran escala.
 
 ## 👋 Sobre mí
 Soy **Byron Velastegui**, estudiante de Ingeniería de Software en la Universidad Técnica de Cotopaxi (UTC).
 
 * 🐍 **Mi stack:** Python (Es mi primer lenguaje).
-* ⏱️ **Experiencia:** Llevo **1 mes** aprendiendo programación.
-* 🎯 **Objetivo Actual:** Aprender a crear interfaces gráficas modernas con Flet antes de pasar a la lógica de bases de datos.
+* ⏱️ **Experiencia:** Llevo aproximadamente **3 meses** aprendiendo programación.
+* 🎯 **Objetivo Actual:** Consolidar mis conocimientos en interfaces gráficas modernas (Flet), arquitectura de software modular y bases de datos relacionales.
 
 ## 🚧 Estado del Proyecto
-Este proyecto está en su **etapa inicial (Día 1)**. Actualmente, me estoy enfocando exclusivamente en el diseño de las interfaces y la navegación.
+Este proyecto acaba de dar un salto de prototipo visual a la **fase de integración funcional**. Actualmente, estoy conectando la interfaz gráfica con el motor de base de datos y aplicando buenas prácticas de modularización.
 
 **Lo que encontrarás en el código ahora mismo:**
-* Estructura básica del proyecto.
-* Diseño visual de la pantalla de **Login** usando Flet.
+* 🏗️ **Arquitectura Modular:** Separación clara entre vistas (`views`), controladores (`controls`), núcleo de base de datos (`db_core`) y componentes UI (`components`).
+* 🔀 **Enrutamiento Dinámico:** Sistema de navegación (Router) implementado para cambiar fluidamente entre el Login y el Dashboard.
+* 💾 **Base de Datos Autogestionada:** Creación dinámica de la base de datos SQLite y de los directorios locales (`assets/fotos_personal`) al arrancar el sistema por primera vez.
+* ✨ **Experiencia de Usuario (UX):** Alertas asíncronas para el manejo de errores y éxitos.
+* 🔒 **Seguridad Básica:** Uso de archivos `.env` y variables de entorno para proteger credenciales y rutas.
 
 **Lo que falta (Próximos pasos):**
-* [ ] Implementar la recuperación de contraseña (En progreso).
-* [ ] Conectar con Base de Datos (SQLite).
-* [ ] Crear el menú principal y la navegación.
-* [ ] Implementar los CRUDs (Clientes, Vehículos, etc.).
+* [x] Diseñar el menú principal y configurar el enrutamiento.
+* [x] Conectar la aplicación a una Base de Datos (SQLite).
+* [ ] Finalizar y pulir las validaciones de los CRUDs (Clientes, Vehículos, etc.).
+* [ ] Implementar la lógica completa de recuperación de contraseña vía Email (SMTP).
+* [ ] Generar reportes y estadísticas en el Dashboard.
 
-## 🛠️ Tecnologías Planificadas
-* **Lenguaje:** Python.
-* **Interfaz:** Flet.
-* **Base de Datos:** SQLite (Próximamente).
+## 🛠️ Tecnologías Utilizadas
+* **Lenguaje:** Python
+* **Frontend / Interfaz:** Flet (Basado en Flutter)
+* **Base de Datos:** SQLite3
+* **Gestión de Entorno:** `python-dotenv`
 
 ## 🤝 Llamado a la comunidad
-Como estoy aprendiendo, este es mi "campo de entrenamiento".
+Como estoy en pleno proceso de aprendizaje, este repositorio es mi "campo de entrenamiento" real. Ya he logrado superar la barrera del enrutamiento y la conexión a bases de datos, pero toda ayuda es bienvenida.
 
-**Si tienes experiencia, me ayudaría mucho si me das consejos sobre:**
-1.  ¿Cómo estructurar mejor los archivos para un Login en Flet?
-2.  ¿Recomendaciones para manejar el cambio de pantallas (Rutas)?
-3.  Cualquier consejo para alguien que está empezando desde cero.
+**Me ayudaría mucho recibir consejos sobre:**
+1. ¿Cuáles son las mejores prácticas para manejar el estado global (como la sesión del usuario logueado) a través de múltiples vistas en Flet?
+2. ¿Alguna recomendación para optimizar consultas relacionales en Python con SQLite cuando el volumen de datos empiece a crecer?
+3. Consejos de seguridad adicionales para sistemas de escritorio que manejan datos de clientes.
+4. Consejos sobre la Estructira del codigo
 
-¡Gracias por visitar y apoyar mi aprendizaje!
+¡Gracias por visitar, leer mi código y apoyar mi camino en la ingeniería de software!
 
 ---
 *Desarrollado por Byron Velastegui - Estudiante UTC.*

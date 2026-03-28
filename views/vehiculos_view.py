@@ -4,9 +4,11 @@ from views import *
 import json
 import datetime as dt
 import os
+from controls import controls_vehiculos as ctr_veh
 #variable que se edita para poder cambbiar entre pantalla sin modificar la barra superior o las notificacioes
 pantalla_vehiculos=ft.Column(expand=True)
 
+marcas= ctr_veh.mostrar_vehiculos()
 ruta=os.path.join("assets", "Config.json")
 fecha_actual= dt.datetime.now().strftime('%d/%m/%Y')
 
@@ -158,9 +160,9 @@ marca_vehiculo= ft.Dropdown(
     color=ft.Colors.BLACK,
     bgcolor=ft.Colors.WHITE,
     editable=True,
-    options=[ft.dropdown.Option(text= v, style=(ft.TextStyle(color="black"))) for v in MARCAS_VEHICULOS],
-    on_select= lambda e: cargar_vehiculos(marca_vehiculo.text),
-    on_blur= lambda e: cargar_vehiculos(marca_vehiculo.text)
+    options=[ft.dropdown.Option(text=m[1], style=(ft.TextStyle(color="black"))) for m in marcas],
+    on_select= lambda e: ctr_veh.marca_change(e),
+    on_blur= lambda e: ctr_veh.marca_change(e)
 )
 modelo_vehiculo= ft.Dropdown(
     width=300,

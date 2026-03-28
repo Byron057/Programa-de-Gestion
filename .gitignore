@@ -2,9 +2,12 @@
 venv
 /services/__pycache__
 /views/__pycache__
-gestion.db
-gestion.sqbpro
 prueba.py
 prueba1.py
 /models/__pycache__
 clientes.py
+gestion_mecanica.db
+/database/__pycache__
+/controls/__pycache__
+/components/__pycache__
+fotos_personal

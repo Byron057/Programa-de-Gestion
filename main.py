@@ -1,6 +1,15 @@
-import flet as ft
 import asyncio
+import flet as ft
+from database import db_core
+db_core.conn_db.data_necesaria()
+import os
 import views
+def inicializar_carpetas_sistema():
+    ruta_fotos = os.path.join("assets", "fotos_personal")
+    
+    os.makedirs(ruta_fotos, exist_ok=True)
+    print("Directorios del sistema verificados.")
+inicializar_carpetas_sistema()
 
 def main(page:ft.Page):
     page.title="Gestion"
@@ -23,4 +32,5 @@ def main(page:ft.Page):
     page.on_view_pop = view_pop
 
     route_change()
-ft.run(main)
+ft.run(main, assets_dir="assets")
+

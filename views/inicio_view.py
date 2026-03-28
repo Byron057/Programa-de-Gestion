@@ -1,6 +1,8 @@
 import flet as ft
-from models import *
+from components import *
 def view_inicio(page: ft.Page):
+    from controls import controls_clientes
+    total_clientes=controls_clientes.total_clientes()
     return ft.Container(
             expand=True,
             bgcolor=ft.Colors.WHITE,
@@ -37,7 +39,7 @@ def view_inicio(page: ft.Page):
                                                         alignment=ft.MainAxisAlignment.CENTER,
                                                         vertical_alignment=ft.CrossAxisAlignment.CENTER,
                                                         controls=[
-                                                            Text("120",45,ft.Colors.WHITE,"bold"),
+                                                            Text(total_clientes,45,ft.Colors.WHITE,"bold"),
                                                             ft.Column(
                                                                 alignment=ft.MainAxisAlignment.CENTER,
                                                                 horizontal_alignment=ft.CrossAxisAlignment.START,

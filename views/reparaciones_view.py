@@ -1,5 +1,5 @@
 import flet as ft
-from models import *
+from components import *
 from views import *
 #codigo qu eno se utilizar apor el momento, tal vez en un futuro se agregue una funcion nueva
 pantalla_reparaciones=ft.Column(expand=True)

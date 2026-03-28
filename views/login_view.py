@@ -184,3 +184,6 @@ def view_login(page: ft.Page):
                alignment= ft.MainAxisAlignment.CENTER,
                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                spacing=50))])
+     
+#mejorar la logica y conectar ala db para poder almacenar los datos necesario
+#incluir sistemas de login para que sea multiusuario 

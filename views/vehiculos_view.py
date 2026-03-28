@@ -1,8 +1,9 @@
 import flet as ft
-from models import *
+from components import *
 from views import *
 import json
 import datetime as dt
+import os
 #variable que se edita para poder cambbiar entre pantalla sin modificar la barra superior o las notificacioes
 pantalla_vehiculos=ft.Column(expand=True)
 
@@ -61,7 +62,6 @@ def guardar_datos(marca="", modelo="",tipo_nuevo="" ,color_nuevo=""):
     with open(ruta, "w", encoding="UTF-8") as f:
         json.dump(config, f, indent=4, ensure_ascii=False)
     
-
 #funcion de prueba valida solo campos llenos, en un futuro tiene que validar todo y enviar un error
 def validar_campos_llenos():
     if (marca_vehiculo.text
@@ -113,8 +113,8 @@ def limpiar_formulario():
     
     lista_reparaciones_realizadas.controls.clear()
     
-    
-    
+    galeria_imagenes_seleccionadas.controls=[]
+       
 def cambiar_vista(nueva_vista):
     boton_guardar.disabled=True
     limpiar_formulario()
@@ -214,6 +214,42 @@ color_vehiculo=ft.Dropdown(
     on_text_change= lambda e: validar_campos_llenos()
 )
 
+galeria_imagenes_seleccionadas=ft.Row(wrap=True, spacing=10)
+
+async def pick_files(e):
+   
+    #faltan validaciones para poder guardar en la db, solo se va aguardar la ruta
+    #debe crearse una carpeta en la que se guardaran estas imagenes
+    
+    def eliminar_foto(foto_eliminar):
+        galeria_imagenes_seleccionadas.controls.remove(foto_eliminar)
+    file_picker=ft.FilePicker()
+    
+    lista_imagenes= await file_picker.pick_files(allow_multiple=True, file_type=ft.FilePickerFileType.IMAGE)
+
+    if lista_imagenes:
+        for i in lista_imagenes:
+            tarjeta=ft.Container(
+                width=100,
+                height=90
+            )
+            imagen=ft.Image(
+                src=i.path,
+                width=100,
+                height=80,
+                fit=ft.BoxFit.COVER,
+                border_radius=5
+                
+            )
+            boton_x=ft.Container(
+                content=ft.IconButton(
+                    icon=ft.Icons.CANCEL,
+                    icon_color=ft.Colors.RED,
+                    on_click=lambda e, t=tarjeta: eliminar_foto(t),
+                )
+            )
+        tarjeta.content=ft.Stack([imagen, boton_x])
+        galeria_imagenes_seleccionadas.controls.append(tarjeta)
 def interfaz_checkbox_vehiculos():
     #restablece algunos campos funciona de la misma manera que la funcion de limpiar campos
     fecha_entrada.value=fecha_actual
@@ -573,10 +609,7 @@ formulario_reparaciones=ft.Column(
             alignment=ft.MainAxisAlignment.CENTER,
             controls=[
                 boton_agregar_reparacion,
-                boton_eliminar_reparacion,
-                ft.Button(
-                    "hola",on_click= lambda e: print_prueba()
-                )
+                boton_eliminar_reparacion
             ]
         )
     ]
@@ -656,6 +689,40 @@ formulario_vehiculos=ft.Container(
                             ]
                         )
                     ]
+                ),
+                ft.Row(
+                    spacing=30,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    controls=[
+                        Text("Estado del Vehículo", 20, ft.Colors.BLACK, "w400"),
+                        ft.VerticalDivider(),
+                        ft.Container(width=420)
+                    ]
+                ),
+                ft.Container(
+                    height=100, 
+                    width=670, 
+                    border=ft.border.all(1, ft.Colors.BLACK),
+                    border_radius=30,
+                    padding=ft.padding.only(left=20,right=20,top=10, bottom=10),
+                    content=(
+                        ft.Row(
+                            controls=[
+                                galeria_imagenes_seleccionadas,
+                                ft.Container(
+                                    width=50,
+                                    height=90,
+                                    bgcolor=ft.Colors.GREY_200,
+                                    border_radius=5,
+                                    alignment=ft.Alignment.CENTER_LEFT,
+                                    content=(
+                                        Icon(ft.Icons.UPLOAD_FILE, ft.Colors.GREY_400, 30)
+                                    ),
+                                    on_click= pick_files
+                                )
+                            ]
+                        )
+                    ),
                 ),
                 ft.Row(
                     spacing=30,

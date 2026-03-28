@@ -1,96 +1,15 @@
 import flet as ft
-from models import *
+from components import *
+from controls import controls_clientes as ctr_cln
 import json
 import os
 #variable que muestra la pantalla 
 pantalla_clientes=ft.Column(expand=True)
 
-ruta= os.path.join("assets", "config.json")
-
-def cargar_datos():
-    with open(ruta, "r", encoding="UTF-8") as f:
-        return json.load(f)
-
-config= cargar_datos()
-DATA_ECUADOR= config["ubicaciones"]
-
-
-def limpiar_formulario():
-    #reestablece los datos del formulario
-    nombres_cliente.value=""
-    apellidos_cliente.value=""
-    cedula_cliente.value=""
-    numero_telefono_cliente.value=""
-    correo_clientes.value=""
-    text_correo.color=ft.Colors.BLACK
-    correo_clientes.color=ft.Colors.BLACK
-    correo_clientes.read_only=False
-    provincias.value=""
-    ciudades.value=""
-    direccion_cliente.value=""
-    check_box_correo.value=True
-
 def cambiar_vista(nueva_vista):
-    boton_guardar.disabled=True
-    limpiar_formulario()
+    ctr_cln.limpiar_formulario()
     pantalla_clientes.controls.clear()
     pantalla_clientes.controls.append(nueva_vista)
-    pantalla_clientes.update()
-#variable que me permite guardar temporalmente las ciudades
-ciudades_actuales=[] 
-
-def cargar_ciudades(provincia):
-    #carga las ciudades segun la provincia
-    if provincia:
-        ciudades_actuales.clear()
-        ciudades.value=""
-        validar_campos_llenos()
-        for i in DATA_ECUADOR[provincia]:
-            ciudades_actuales.append(i)
-        
-        if len(ciudades_actuales)>10:
-            ciudades.menu_height=400
-        else:
-            ciudades.menu_height= None
-        
-        ciudades.options= [ft.dropdown.Option(text= c,style= ft.TextStyle(color="black")) for c in ciudades_actuales]
-
-def validar_campos_llenos():
-        #funcion incompleta en un futuro debe validar todos los campos
-        if (
-            nombres_cliente.value
-            and apellidos_cliente.value 
-            and cedula_cliente.value
-            and numero_telefono_cliente.value 
-            and correo_clientes.value 
-            and provincias.value
-            and ciudades.value
-            and direccion_cliente.value
-        ):
-            boton_guardar.disabled=False
-        else:
-            boton_guardar.disabled=True
-
-def validacion_checkbox():
-    #funcion que me permite registtrar o no un correo electronico
-    correo_clientes.value = ""
-    
-    if check_box_correo.value:
-        text_correo.color= ft.Colors.BLACK
-        correo_clientes.color= ft.Colors.BLACK
-        correo_clientes.read_only = False
-        
-    else:
-        correo_clientes.read_only = True
-        correo_clientes.color= ft.Colors.GREY_400
-        text_correo.color=ft.Colors.GREY_400
-        #por el momento me registra esto para no tener conflictos en las validaciones, posiblemente cambie la logica
-        correo_clientes.value = "N/A"
-
-    validar_campos_llenos()
-
-#variables que se usan en el formulario de los clientes
-#falta asociar o no a un vehiculo esto se hara en el momento enel que tenga registtrado en la db
 
 boton_cancelar= ft.Button(
     content=Text("Cancelar",20, ft.Colors.BLACK),
@@ -100,7 +19,6 @@ boton_cancelar= ft.Button(
 )
 boton_guardar=ft.Button(
     content=Text("Guardar", 20, ft.Colors.WHITE),
-    disabled=True,
     style=ft.ButtonStyle(
         bgcolor={
             ft.ControlState.DISABLED: ft.Colors.GREY_400, 
@@ -112,53 +30,82 @@ boton_guardar=ft.Button(
         },
         shape=ft.RoundedRectangleBorder(radius=1)
     ),
-    on_click= lambda e: cambiar_vista(listado_clientes())
+    on_click= lambda e: ctr_cln.guardar_datos_clientes(e)
 )
 nombres_cliente=ft.TextField(
     hint_text="Ejemplo: Luis Fernando",
     border_color=ft.Colors.BLACK,
     color=ft.Colors.BLACK,
     capitalization=ft.TextCapitalization.WORDS,
-    on_change= lambda e: validar_campos_llenos()
+    error_style=ft.TextStyle(
+        color=ft.Colors.RED_ACCENT_700,
+        weight=ft.FontWeight.W_500,
+        font_family="Roboto-Medium"
+    )
 )
 apellidos_cliente=ft.TextField(
     hint_text="Ejemplo: Pérez Salazar",
     border_color=ft.Colors.BLACK,
     color=ft.Colors.BLACK,
     capitalization=ft.TextCapitalization.WORDS,
-    on_change= lambda e: validar_campos_llenos()
+    error_style=ft.TextStyle(
+        color=ft.Colors.RED_ACCENT_700,
+        weight=ft.FontWeight.W_500,
+        font_family="Roboto-Medium"
+    )
 )
 cedula_cliente= ft.TextField(
     hint_text="Ejemplo: 0503456764",
     border_color=ft.Colors.BLACK,
     color=ft.Colors.BLACK,
-    on_change= lambda e: validar_campos_llenos()
+    error_style=ft.TextStyle(
+        color=ft.Colors.RED_ACCENT_700,
+        weight=ft.FontWeight.W_500,
+        font_family="Roboto-Medium"
+    ),
+    max_length=10,
+    counter_style=ft.TextStyle(size=0)
+    
     
 ) 
 numero_telefono_cliente= ft.TextField(
     hint_text="Ejmplo: 0998743567",
     border_color= ft.Colors.BLACK,
     color= ft.Colors.BLACK,
-    on_change=lambda e: validar_campos_llenos()
+    error_style=ft.TextStyle(
+        color=ft.Colors.RED_ACCENT_700,
+        weight=ft.FontWeight.W_500,
+        font_family="Roboto-Medium"
+    ),
+    max_length=10,
+    counter_style=ft.TextStyle(size=0)
 )
 text_correo=Text("Correo Electrónico", 20 , ft.Colors.BLACK, "w400")
-correo_clientes=ft.TextField(
+correo_cliente=ft.TextField(
     width=675,
     hint_text="Ejemplo: automotrizvelastegui@gmail.com",
     border_color= ft.Colors.BLACK,
-    color=ft.Colors.BLACK, 
-    on_change=lambda e: validar_campos_llenos()
+    color=ft.Colors.BLACK,
+    error_style=ft.TextStyle(
+        color=ft.Colors.RED_ACCENT_700,
+        weight=ft.FontWeight.W_500,
+        font_family="Roboto-Medium"
+    )
 )
 provincias= ft.Dropdown(
     menu_height=400,
     width= 300, 
     hint_text="Seleccione una Provincia",
-    options=[ft.dropdown.Option(text=p, style=ft.TextStyle(color="black")) for p in DATA_ECUADOR],
+    options=[ft.dropdown.Option(text=p[1], style=ft.TextStyle(color="black")) for p in ctr_cln.provincias],
     color= ft.Colors.BLACK,
     border_color= ft.Colors.BLACK,
     bgcolor=ft.Colors.WHITE,
-    on_select= lambda e: cargar_ciudades(provincias.value),
-    on_text_change= lambda e: validar_campos_llenos()
+    on_select= lambda e: ctr_cln.provincia_change(e),
+    error_style=ft.TextStyle(
+        color=ft.Colors.RED_ACCENT_700,
+        weight=ft.FontWeight.W_500,
+        font_family="Roboto-Medium"
+    )
 )
 ciudades= ft.Dropdown(
     width= 300,
@@ -166,22 +113,25 @@ ciudades= ft.Dropdown(
     color= ft.Colors.BLACK,
     border_color= ft.Colors.BLACK,
     bgcolor=ft.Colors.WHITE,
-    on_blur=lambda e: validar_campos_llenos(),
-    on_text_change= lambda e: validar_campos_llenos()
+    error_style=ft.TextStyle(
+        color=ft.Colors.RED_ACCENT_700,
+        weight=ft.FontWeight.W_500,
+        font_family="Roboto-Medium"
+    )
 )
 direccion_cliente= ft.TextField(
     width=675,
     hint_text="Ejemplo: San Felipe, UTC",
     border_color= ft.Colors.BLACK,
     color=ft.Colors.BLACK,
-    on_change= lambda e: validar_campos_llenos()
+    capitalization=ft.TextCapitalization.WORDS
 )   
 check_box_correo=ft.Checkbox(
     value=True,
     label="Registrar un Correo Electrónico",
     label_style=ft.TextStyle(color=ft.Colors.BLACK),
     border_side=ft.BorderSide(2, ft.Colors.BLACK),
-    on_change= validacion_checkbox
+    on_change= ctr_cln.validacion_checkbox
     
     
 )         
@@ -209,7 +159,7 @@ formulario=ft.Container(
                     controls=[
                         ft.Column(
                             controls=[
-                                Text("Nombres del Cliente", 20, ft.Colors.BLACK, "w400"),
+                                Text("Nombres", 20, ft.Colors.BLACK, "w400"),
                                 nombres_cliente
                                 
                             ]
@@ -217,7 +167,7 @@ formulario=ft.Container(
                         ft.VerticalDivider(),
                         ft.Column(
                             controls=[
-                                Text("Apellidos del Cliente", 20, ft.Colors.BLACK, "w400"),
+                                Text("Apellidos", 20, ft.Colors.BLACK, "w400"),
                                 apellidos_cliente
                             ]
                         )
@@ -257,7 +207,7 @@ formulario=ft.Container(
                         ft.Column(
                             controls=[
                                 text_correo,
-                                correo_clientes
+                                correo_cliente
                             ]
                         )
                     ]
@@ -298,7 +248,11 @@ formulario=ft.Container(
 )
 
 def agregar_clientes():
-    #construye la pantalla para agregar clientes, si se necesit algo mas se puede agregar aqui               
+    #construye la pantalla para agregar clientes, si se necesit algo mas se puede agregar aqui  
+    boton_cancelar.on_click= lambda e: cambiar_vista(listado_clientes())
+    boton_guardar.on_click= lambda e: ctr_cln.guardar_datos_clientes(e)
+    formulario.bgcolor=ft.Colors.GREY_200
+    formulario.shadow=ft.BoxShadow(blur_radius=15, color=ft.Colors.BLACK12),
     return ft.Container(
         expand= True,
         bgcolor=ft.Colors.WHITE,
@@ -324,6 +278,239 @@ def agregar_clientes():
             ]
         )
     )
+
+def crear_tarjeta(item):
+    
+    return ft.Card(
+        elevation=5,
+        shadow_color=ft.Colors.WHITE,
+        content=ft.Container(
+            bgcolor=ft.Colors.GREY_100,
+            padding=3,
+            border=ft.border.all(2, ft.Colors.BLACK),
+            border_radius=10,
+            content=ft.ListTile(
+                leading=ft.Icon(icon=ft.Icons.PERSON, size=50),
+                title=ft.Text(
+                value=f"{item[3]} {item[2]}",
+                color=ft.Colors.BLACK,
+                weight=ft.FontWeight.W_500
+                ),
+                subtitle=ft.Text(
+                    value=f"Cedula: {item[1]}    Telefono: {item[4]}    Vehiculo: [agregar en el futuro]",
+                    color=ft.Colors.BLACK,
+                    weight=ft.FontWeight.W_400
+                ),
+                bgcolor=ft.Colors.GREY_100,
+                on_click= lambda e: cambiar_vista(detalles_clientes(item))
+            )
+        )
+)
+
+def tabla_clientes_registrados():
+     
+    datos=ctr_cln.obtener_datos_clientes()
+    
+    lista_resultados=ft.Column(expand=True, scroll=ft.ScrollMode.AUTO)
+    
+    def actualizar_lista(e=None):
+        busqueda=barra_busqueda.value.lower().strip()
+        lista_resultados.controls.clear()
+        for cliente in datos:
+            if busqueda in cliente[2].lower() or busqueda in cliente[3].lower() or busqueda in cliente[1]:
+                nueva_tarjeta=crear_tarjeta(cliente)
+                lista_resultados.controls.append(nueva_tarjeta)
+                
+    barra_busqueda= ft.TextField(
+        width=600,
+        border_radius=15,
+        hint_text="Busqueda por Nombre o  Número de Cedula",
+        prefix_icon=ft.Icons.SEARCH,
+        on_change=actualizar_lista,
+        border_color=ft.Colors.BLACK,
+        color=ft.Colors.BLACK
+    )
+    tabla_principal= ft.Container(
+        width=950,
+        expand=True,
+        content=ft.Column(
+            expand=True,
+            alignment=ft.MainAxisAlignment.CENTER,
+            controls=[
+                ft.Row(
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    controls=[
+                        barra_busqueda,
+                    ]
+                ),
+                lista_resultados
+            ]
+        )
+    )
+    
+    actualizar_lista()
+    
+    return ft.Container(
+        expand=True,
+        alignment=ft.Alignment.CENTER,
+        content=ft.Column(
+            alignment=ft.MainAxisAlignment.CENTER,
+            controls=[
+                tabla_principal
+            ]
+        )
+    )
+    
+def detalles_clientes(item):
+    global id_actual
+    id_actual=item[0]
+    boton_editar=ft.Button(
+        content=Text("Editar", 20, ft.Colors.WHITE),
+        bgcolor=ft.Colors.BLUE_600,
+        on_click= lambda e: editar_clientes(e,item)
+    )
+    boton_eliminar=ft.Button(
+        content=Text("Eliminar", 20, ft.Colors.WHITE),
+        bgcolor=ft.Colors.RED_700,
+        on_click=lambda e: ctr_cln.eliminar_datos_cliente()
+    )
+    imagen = ft.Container(
+        width=150,
+        height=160,
+        border_radius=10,
+        alignment=ft.Alignment.CENTER,
+        content=ft.Icon(ft.Icons.PERSON, size=150, color=ft.Colors.GREY_400)
+    )
+    def campo(icono, titulo, valor):
+        return ft.Container(
+            expand=True,
+            padding=12,
+            border_radius=12,
+            bgcolor=ft.Colors.GREY_100,
+            border=ft.border.all(1, ft.Colors.GREY_300),
+            content=ft.Row(
+                spacing=12,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    ft.Container(
+                        width=35,
+                        height=35,
+                        border_radius=8,
+                        bgcolor=ft.Colors.BLUE_100,
+                        alignment=ft.Alignment.CENTER,
+                        content=ft.Icon(icono, size=18, color=ft.Colors.BLUE_700)
+                    ),
+                    ft.Column(
+                        spacing=2,
+                        expand=True,
+                        controls=[
+                            Text(titulo, 12, ft.Colors.BLACK),
+                            Text(valor, 16, ft.Colors.GREY_600 ,"bold")
+                        ]
+                    )
+                ]
+            )
+        )
+    
+    datos= ft.Column(
+        spacing=12,
+        controls=[
+            ft.Row(
+                spacing=12,
+                controls=[
+                    campo(ft.Icons.PERSON, "Nombres", item[2]),
+                    campo(ft.Icons.PERSON_OUTLINE, "Apellidos", item[3])
+                ]
+            ),
+            ft.Row(
+                spacing=12,
+                controls=[
+                    campo(ft.Icons.BADGE, "Cédula", item[1]),
+                    campo(ft.Icons.PHONE, "Teléfono", item[4])
+                ]
+            ),
+            ft.Row(
+                spacing=12,
+                controls=[
+                    campo(ft.Icons.EMAIL, "Correo", item[5]),
+                    campo(ft.Icons.LOCATION_ON, "Provincia", item[6])
+                ]
+            ),
+            ft.Row(
+                spacing=12,
+                controls=[
+                    campo(ft.Icons.MAP, "Ciudad", item[7]),
+                    campo(ft.Icons.HOME, "Dirección", item[8])
+                ]
+            ),
+        ]
+    )
+    
+    return ft.Container(
+        expand= True,
+        bgcolor=ft.Colors.WHITE,
+        content=ft.Column(
+            expand=True,
+            controls=[
+                ft.Container(
+                    height=60,
+                    bgcolor=ft.Colors.WHITE,
+                    padding=ft.padding.symmetric(horizontal=20),
+                    content=ft.Row(
+                        controls=[
+                            ft.IconButton(
+                                icon=ft.Icons.ARROW_BACK,
+                                icon_color=ft.Colors.BLACK,
+                                on_click=lambda e: cambiar_vista(listado_clientes())
+                            ),
+                            ft.Text(
+                                "Detalles del Personal",
+                                size=20,
+                                weight="bold",
+                                color=ft.Colors.BLACK
+                            ),
+                        ]
+                    )
+                ),
+                ft.Container(
+                    expand=True,
+                    padding=20,
+                    content=ft.Row(
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        controls=[
+                            ft.Container(
+                                width=950,
+                                padding=25,
+                                bgcolor=ft.Colors.GREY_200,
+                                border_radius=20,
+                                shadow=ft.BoxShadow(
+                                    blur_radius=15,
+                                    color=ft.Colors.BLACK12
+                                ),
+                                content=ft.Column(
+                                    scroll=ft.ScrollMode.AUTO,
+                                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                                    spacing=15,
+                                    controls=[
+                                        imagen,
+                                        datos,
+                                        ft.Row(
+                                            alignment=ft.MainAxisAlignment.END,
+                                            controls=[
+                                                boton_editar,
+                                                boton_eliminar
+                                            ]
+                                        ),
+                                    ]
+                                )
+                            )
+                        ]
+                    )
+                )
+            ]
+        )
+    )
+    
 def listado_clientes():
     #misma logica que se estructuro para el listado de vehiculos
     return ft.Container(
@@ -341,26 +528,67 @@ def listado_clientes():
                             Icon(ft.Icons.ADD, ft.Colors.WHITE,20),
                             bgcolor=ft.Colors.BLUE_700,
                             on_click= lambda e: cambiar_vista(agregar_clientes())
-                            )
-                        ]
-                    ),
-                ft.Divider(height=10, color=ft.Colors.BLACK)
+                        )
+                    ]
+                ),
+                ft.Divider(height=10, color=ft.Colors.BLACK),
+                tabla_clientes_registrados()
             ]
         )
     )
 
+
+def editar_clientes(e,item):
+    boton_cancelar.on_click= lambda e: e.page.pop_dialog()
+    boton_guardar.on_click= lambda : ctr_cln.guardar_datos_modificados(e)
+    formulario.shadow=None
+    nombres_cliente.value=item[2]
+    apellidos_cliente.value=item[3]
+    cedula_cliente.value=item[1]
+    numero_telefono_cliente.value=item[4]
+    correo_cliente.value=item[5]
+    provincias.value=item[6]
+    ctr_cln.provincia_change(item[6])
+    ciudades.value=item[7]
+    direccion_cliente.value=item[8]
+    form_global_clientes(e)
+    
 
 def view_clientes(page: ft.Page):
     #retorna al dashboard
     pantalla_clientes.controls=[listado_clientes()]
     return pantalla_clientes
     
-def Form_global(page: ft.Page):
+
+
+def form_global_clientes(e):
     #prueba para ver el funcionamiento, debe agregarse botones de cancelar y guardar
     #ademas los campos se deben llenar automaticamente coon la info ya registrada para poder editar
-    formulario_global=page.show_dialog(
+    formulario_global=e.page.show_dialog(
         ft.AlertDialog(
-            content=formulario
+            modal=True,
+            open=True,
+            bgcolor=ft.Colors.GREY_200,
+            content= ft.Column(
+                controls= [
+                    ft.Container(
+                    width=750,
+                    height=580,
+                    content=formulario
+                    ),
+                    ft.Container(
+                        expand=True,
+                        content=ft.Row(
+                            alignment=ft.MainAxisAlignment.END,
+                            expand=True,
+                            controls=[
+                                boton_cancelar,
+                                boton_guardar
+                            ]
+                        )
+                    )  
+                ]
+            )
         )
     )
     return formulario_global

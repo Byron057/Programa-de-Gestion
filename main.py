@@ -1,7 +1,6 @@
-import asyncio
 import flet as ft
 from database import db_core
-db_core.conn_db.data_necesaria()
+db_core.data_necesaria()
 import os
 import views
 def inicializar_carpetas_sistema():

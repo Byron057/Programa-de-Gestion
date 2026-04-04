@@ -82,6 +82,7 @@ async def  seleccionar_foto(e):
     
     if foto_seleccionada:
         construir_stack_foto(foto_seleccionada[0].path)
+        foto_integrante.update()
 
     if foto_seleccionada:
         ruta_anterior= foto_seleccionada[0].path 

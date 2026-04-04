@@ -2,45 +2,50 @@ import sqlite3
 import json 
 import os
 
-class conn_db():
-    def conectBaseDeDatos():
-        try:
-            conn= sqlite3.connect("gestion_mecanica.db")
-            print("coneccion exitosa")
-            
-            return conn
-        except sqlite3.Error as error:
-            print(error)
-            return None
-    def data_necesaria(db_path='gestion_mecanica.db'):
-        try:
-            conn=sqlite3.connect(db_path)
-            query=conn.cursor()
-            query.execute("PRAGMA foreign_keys = ON")
-            query.executescript("""
-                CREATE TABLE IF NOT EXISTS PROVINCIAS (
-                    id_prov INTEGER PRIMARY KEY AUTOINCREMENT,
-                    PROVINCIA TEXT UNIQUE NOT NULL
-                );
 
-                INSERT OR IGNORE INTO PROVINCIAS (PROVINCIA) VALUES 
-                ('Azuay'), ('Bolívar'), ('Cañar'), ('Carchi'), ('Chimborazo'),
-                ('Cotopaxi'), ('El Oro'), ('Esmeraldas'), ('Galápagos'), ('Guayas'),
-                ('Imbabura'), ('Loja'), ('Los Ríos'), ('Manabí'), ('Morona Santiago'),
-                ('Napo'), ('Orellana'), ('Pastaza'), ('Pichincha'), ('Santa Elena'),
-                ('Santo Domingo de los Tsáchilas'), ('Sucumbíos'), ('Tungurahua'),
-                ('Zamora Chinchipe');
-            """)
-            query.executescript("""
-                CREATE TABLE IF NOT EXISTS CIUDADES(
-                    id_ciudad INTEGER PRIMARY KEY AUTOINCREMENT,
-                    CIUDAD TEXT,
-                    id_prov INTEGER,
-                    UNIQUE(CIUDAD, id_prov),
-                    FOREIGN KEY (id_prov) REFERENCES PROVINCIAS (id_prov)
-                );
-                
-                INSERT OR IGNORE INTO CIUDADES (CIUDAD, id_prov) VALUES 
+def conectBaseDeDatos():
+    try:
+        conn= sqlite3.connect("gestion_mecanica.db")
+        return conn
+    except sqlite3.Error as error:
+        print(error)
+        return None
+    
+def tabla_vacia(query, tabla):
+    query.execute(f"SELECT COUNT(*) FROM {tabla}")
+    return query.fetchone()[0]==0
+def data_necesaria(db_path='gestion_mecanica.db'):
+    try:
+        conn=sqlite3.connect(db_path)
+        query=conn.cursor()
+        query.execute("PRAGMA foreign_keys = ON")
+        query.execute("""
+            CREATE TABLE IF NOT EXISTS PROVINCIAS (
+                id_prov INTEGER PRIMARY KEY AUTOINCREMENT,
+                PROVINCIA TEXT UNIQUE NOT NULL
+            )"""
+        )
+        if tabla_vacia(query,"PROVINCIAS"):
+
+            query.executescript("""INSERT OR IGNORE INTO PROVINCIAS (PROVINCIA) VALUES 
+            ('Azuay'), ('Bolívar'), ('Cañar'), ('Carchi'), ('Chimborazo'),
+            ('Cotopaxi'), ('El Oro'), ('Esmeraldas'), ('Galápagos'), ('Guayas'),
+            ('Imbabura'), ('Loja'), ('Los Ríos'), ('Manabí'), ('Morona Santiago'),
+            ('Napo'), ('Orellana'), ('Pastaza'), ('Pichincha'), ('Santa Elena'),
+            ('Santo Domingo de los Tsáchilas'), ('Sucumbíos'), ('Tungurahua'),
+            ('Zamora Chinchipe');
+        """)
+        query.executescript("""
+            CREATE TABLE IF NOT EXISTS CIUDADES(
+                id_ciudad INTEGER PRIMARY KEY AUTOINCREMENT,
+                CIUDAD TEXT,
+                id_prov INTEGER,
+                UNIQUE(CIUDAD, id_prov),
+                FOREIGN KEY (id_prov) REFERENCES PROVINCIAS (id_prov)
+            )"""
+        )
+        if tabla_vacia(query,"CIUDADES"):
+            query.execute("""INSERT OR IGNORE INTO CIUDADES (CIUDAD, id_prov) VALUES 
                 ('Cuenca', 1), ('Camilo Ponce Enríquez', 1), ('Chordeleg', 1), ('El Pan', 1), ('Girón', 1), ('Guachapala', 1), ('Gualaceo', 1), ('Nabón', 1), ('Oña', 1), ('Paute', 1), ('Pucará', 1), ('San Fernando', 1), ('Santa Isabel', 1), ('Sevilla de Oro', 1), ('Sigsig', 1),
                 ('Guaranda', 2), ('Caluma', 2), ('Chillanes', 2), ('Chimbo', 2), ('Echeandía', 2), ('Las Naves', 2), ('San Miguel', 2),
                 ('Azogues', 3), ('Biblián', 3), ('Cañar', 3), ('Déleg', 3), ('El Tambo', 3), ('La Troncal', 3), ('Suscal', 3),
@@ -66,93 +71,138 @@ class conn_db():
                 ('Ambato', 23), ('Baños de Agua Santa', 23), ('Cevallos', 23), ('Mocha', 23), ('Patate', 23), ('Quero', 23), ('San Pedro de Pelileo', 23), ('Santiago de Píllaro', 23), ('Tisaleo', 23),
                 ('Zamora', 24), ('Centinela del Cóndor', 24), ('Chinchipe', 24), ('El Pangui', 24), ('Nangaritza', 24), ('Palanda', 24), ('Paquisha', 24), ('Yacuambi', 24), ('Yantzaza', 24);
                 """)
-            
-            query.execute("""
-                CREATE TABLE IF NOT EXISTS PERSONAL(
-                    id_personal INTEGER PRIMARY KEY AUTOINCREMENT,
-                    CEDULA TEXT UNIQUE,
-                    NOMBRES TEXT,
-                    APELLIDOS TEXT,
-                    TELEFONO TEXT,
-                    CORREO TEXT,
-                    PROVINCIA TEXT, 
-                    CIUDAD TEXT,
-                    DIRECCION TEXT,
-                    FOTO TEXT,
-                    ESTADO TEXT DEFAULT 'activo' CHECK("ESTADO" IN ('activo', 'inactivo'))
-                    
-                )     
-            """)
-            
-            query.execute("""
-                CREATE TABLE IF NOT EXISTS CLIENTES(
-                    id_cliente INTEGER PRIMARY KEY AUTOINCREMENT,
-                    CEDULA TEXT UNIQUE,
-                    NOMBRES TEXT,
-                    APELLIDOS TEXT,
-                    TELEFONO TEXT,
-                    CORREO TEXT,
-                    PROVINCIA TEXT, 
-                    CIUDAD TEXT,
-                    DIRECCION TEXT,
-                    ESTADO TEXT DEFAULT 'activo' CHECK("ESTADO" IN ('activo', 'inactivo'))
-                )     
-            """)
+        
+        query.execute("""
+            CREATE TABLE IF NOT EXISTS PERSONAL(
+                id_personal INTEGER PRIMARY KEY AUTOINCREMENT,
+                CEDULA TEXT UNIQUE,
+                NOMBRES TEXT,
+                APELLIDOS TEXT,
+                TELEFONO TEXT,
+                CORREO TEXT,
+                PROVINCIA TEXT, 
+                CIUDAD TEXT,
+                DIRECCION TEXT,
+                FOTO TEXT,
+                ESTADO TEXT DEFAULT 'activo' CHECK("ESTADO" IN ('activo', 'inactivo'))
+                
+            )     
+        """)
+        
+        query.execute("""
+            CREATE TABLE IF NOT EXISTS CLIENTES(
+                id_cliente INTEGER PRIMARY KEY AUTOINCREMENT,
+                CEDULA TEXT UNIQUE,
+                NOMBRES TEXT,
+                APELLIDOS TEXT,
+                TELEFONO TEXT,
+                CORREO TEXT,
+                PROVINCIA TEXT, 
+                CIUDAD TEXT,
+                DIRECCION TEXT,
+                ESTADO TEXT DEFAULT 'activo' CHECK("ESTADO" IN ('activo', 'inactivo'))
+            )     
+        """)
+        query.execute("""
+            CREATE TABLE IF NOT EXISTS MARCAS_VEHICULOS(
+                id_marca INTEGER PRIMARY KEY AUTOINCREMENT,
+                MARCA TEXT UNIQUE
+            );
+        """)
+
+        if tabla_vacia(query, "MARCAS_VEHICULOS"):
             query.executescript("""
-                CREATE TABLE IF NOT EXISTS MARCAS_VEHICULOS(
-                    id_marca INTEGER PRIMARY KEY AUTOINCREMENT,
-                    MARCA TEXT UNIQUE
-                );
-                
-                INSERT OR IGNORE INTO MARCAS_VEHICULOS (MARCA) VALUES
-                ('Toyota'),('Chevrolet'),('Nissan'),('Kia'),('Hyundai');
-                
-                
+                INSERT INTO MARCAS_VEHICULOS (MARCA) VALUES
+                ('Toyota'), ('Chevrolet'), ('Nissan'), ('Kia'), ('Hyundai');
             """)
+        query.execute("""
+            CREATE TABLE IF NOT EXISTS MODELOS_VEHICULOS(
+                id_modelo INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_marca INTEGER,
+                MODELO TEXT,
+                UNIQUE(id_marca, MODELO),
+                FOREIGN KEY (id_marca) REFERENCES MARCAS_VEHICULOS (id_marca)
+            );
+        """)
+
+        if tabla_vacia(query, "MODELOS_VEHICULOS"):
             query.executescript("""
-                CREATE TABLE IF NOT EXISTS MODELOS_VEHICULOS(
-                    id_modelo INTEGER PRIMARY KEY AUTOINCREMENT,
-                    id_marca INTEGER,
-                    MODELO TEXT UNIQUE,
-                    FOREIGN KEY (id_marca) REFERENCES MARCAS_VEHICULOS (id_marca)
-                );
-                INSERT OR IGNORE INTO MODELOS_VEHICULOS (id_marca, MODELO) VALUES
-                    (1, 'Hilux'), (1, 'Corolla'), (1, 'Yaris'), (1, 'Fortuner'), (1, 'RAV4'), 
-                    (2, 'Sail'), (2, 'D-Max'), (2, 'Spark'), (2, 'Tracker'), (2, 'Aveo'), 
-                    (3, 'Frontier'), (3, 'Versa'), (3, 'Sentra'), (3, 'Kicks'), (3, 'X-Trail');
+                INSERT INTO MODELOS_VEHICULOS (id_marca, MODELO) VALUES
+                (1, 'Hilux'), (1, 'Corolla'), (1, 'Yaris'),
+                (2, 'Sail'), (2, 'D-Max'), (2, 'Spark'),
+                (3, 'Frontier'), (3, 'Versa'), (3, 'Sentra');
             """)
-            
-            query.execute("""
-                CREATE TABLE IF NOT EXISTS COLORES(
-                    id_color INTEGER PRIMARY KEY AUTOINCREMENT,
-                    COLOR TEXT UNIQUE
-                )
+        
+        query.execute("""
+            CREATE TABLE IF NOT EXISTS COLORES(
+                id_color INTEGER PRIMARY KEY AUTOINCREMENT,
+                COLOR TEXT UNIQUE
+            );
+        """)
+
+        if tabla_vacia(query, "COLORES"):
+            query.executescript("""
+                INSERT INTO COLORES (COLOR) VALUES
+                ('Negro'), ('Blanco'), ('Gris'), ('Rojo'), ('Azul'),
+                ('Plata'), ('Verde');
             """)
-            conn.commit()
-            conn.close()
-        except sqlite3.Error as error:
-            print(error)
-    
-    def cargar_catalogo_provincias():
-        try:
-            conn= sqlite3.connect("gestion_mecanica.db")
-            query= conn.cursor()
-            query.execute('SELECT * FROM PROVINCIAS;')
-            resultado= query.fetchall()
-            conn.close()
-            return resultado
-        except sqlite3.Error as errorw:
-            conn.close()
-            print(errorw)
-    
-    def cargar_catalogo_ciudades(id_prov):
-        try:
-            conn= sqlite3.connect("gestion_mecanica.db")
-            query= conn.cursor()
-            query.execute('SELECT id_ciudad, CIUDAD FROM CIUDADES WHERE id_prov=?', (id_prov,))
-            resultado= query.fetchall()
-            conn.close()
-            return resultado
-        except sqlite3.Error as errorw:
-            conn.close()
-            print(errorw)
+        query.execute("""
+            CREATE TABLE IF NOT EXISTS TIPOS_VEHICULOS(
+                id_tipo INTEGER PRIMARY KEY AUTOINCREMENT,
+                TIPO TEXT UNIQUE
+            );
+        """)
+
+        if tabla_vacia(query, "TIPOS_VEHICULOS"):
+            query.executescript("""
+                INSERT INTO TIPOS_VEHICULOS (TIPO) VALUES
+                ('Automovil'), ('Camioneta'), ('Furgoneta'), ('Taxi');
+            """)
+        
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS VEHICULOS(
+                id_vehiculo INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_cliente INTEGER,
+                id_marca INTEGER,
+                id_modelo INTEGER,
+                PLACA TEXT UNIQUE,
+                YEAR TEXT,
+                id_tipo INTEGER,
+                id_color INTEGER,
+                ESTADO TEXT DEFAULT 'activo' CHECK("ESTADO" IN ('activo', 'inactivo')),
+                
+                FOREIGN KEY (id_cliente) REFERENCES CLIENTES (id_cliente)
+                FOREIGN KEY (id_marca) REFERENCES MARCAS_VEHICULOS (id_marca),
+                FOREIGN KEY (id_modelo) REFERENCES MODELOS_VEHICULOS (id_modelo),
+                FOREIGN KEY (id_tipo) REFERENCES TIPOS_VEHICULOS (id_tipo),
+                FOREIGN KEY (id_color) REFERENCES COLORES (id_color)
+            )
+        """)
+        conn.commit()
+        conn.close()
+    except sqlite3.Error as error:
+        print(error)
+
+def cargar_catalogo_provincias():
+    try:
+        conn= sqlite3.connect("gestion_mecanica.db")
+        query= conn.cursor()
+        query.execute('SELECT * FROM PROVINCIAS;')
+        resultado= query.fetchall()
+        conn.close()
+        return resultado
+    except sqlite3.Error as errorw:
+        conn.close()
+        print(errorw)
+
+def cargar_catalogo_ciudades(id_prov):
+    try:
+        conn= sqlite3.connect("gestion_mecanica.db")
+        query= conn.cursor()
+        query.execute('SELECT id_ciudad, CIUDAD FROM CIUDADES WHERE id_prov=?', (id_prov,))
+        resultado= query.fetchall()
+        conn.close()
+        return resultado
+    except sqlite3.Error as errorw:
+        conn.close()
+        print(errorw)

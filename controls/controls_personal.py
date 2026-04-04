@@ -158,9 +158,8 @@ def guardar_db_datos_limpios():
         foto=""
     else:
         foto=personal_view.nueva_ruta
-    db_table= personal_db.personal_table()
     
-    resultado=db_table.guardar_personal(cedula, nombres, apellidos, telefono, correo, provincia, ciudad, direccion,foto)
+    resultado=personal_db.guardar_personal(cedula, nombres, apellidos, telefono, correo, provincia, ciudad, direccion,foto)
     
     return resultado
 
@@ -175,7 +174,7 @@ def guardar_datos_personal(e):
             e.page.run_task(alerta_error, e,"Verifique si la cedula ya existe en el sistema")
 
 def obtener_datos_personal():
-    return personal_db.personal_table.mostrar_personal_registrado()
+    return personal_db.mostrar_personal_registrado()
 
 
 def editar_datos_personal():
@@ -199,9 +198,8 @@ def editar_datos_personal():
     else:
         foto=personal_view.nueva_ruta
     id=personal_view.id_actual
-    db_table= personal_db.personal_table()
     
-    resultado=db_table.editar_datos_personal(cedula, nombres, apellidos, telefono, correo, provincia, ciudad, direccion,foto,id)
+    resultado=personal_db.editar_datos_personal(cedula, nombres, apellidos, telefono, correo, provincia, ciudad, direccion,foto,id)
     
     return resultado
 
@@ -211,10 +209,12 @@ def guardar_datos_modificados(e):
         se_guardo_en_db = editar_datos_personal()
         if se_guardo_en_db == True:
             
-            e.page.run_task(save_alert,e)
             e.page.pop_dialog()
+            
+            e.page.run_task(save_alert,e)
+            
 
-            nuevo_item = personal_db.personal_table().obtener_por_id(personal_view.id_actual)
+            nuevo_item = personal_db.obtener_por_id(personal_view.id_actual)
 
             personal_view.cambiar_vista(
                 personal_view.detalles_personal(nuevo_item)
@@ -223,13 +223,13 @@ def guardar_datos_modificados(e):
             
         else:
             e.page.run_task(alerta_error, e,"Verifique si la cedula ya existe en el sistema")
-provincias=db_core.conn_db.cargar_catalogo_provincias()
+provincias=db_core.cargar_catalogo_provincias()
 
 def provincia_change(e):
     pro=personal_view.provincias.value
     id_prov = next((p[0] for p in provincias if p[1] == pro), None)
     
-    ciudades= db_core.conn_db.cargar_catalogo_ciudades(id_prov)
+    ciudades= db_core.cargar_catalogo_ciudades(id_prov)
     
     personal_view.ciudades.options=[ft.dropdown.Option(text= c[1],style= ft.TextStyle(color="black")) for c in ciudades]
     personal_view.ciudades.value=None
@@ -237,5 +237,5 @@ def provincia_change(e):
 
 def eliminar_datos_personal():
     id=personal_view.id_actual
-    personal_db.personal_table.eliminar_datos_personal(id)
+    personal_db.eliminar_datos_personal(id)
     personal_view.cambiar_vista(personal_view.listado_personal())

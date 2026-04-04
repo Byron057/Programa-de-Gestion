@@ -1,13 +1,13 @@
 import flet as ft 
 import re
-from views import clientes_view
+from views import clientes_view,vehiculos_view
 from database import db_core
 from database import clientes_db
 from components import *
 def total_clientes():
-    total_clientes=clientes_db.cliente_table.contar_clientes_activos()
+    total_clientes=clientes_db.contar_clientes_activos()
     return total_clientes
-provincias=db_core.conn_db.cargar_catalogo_provincias()
+provincias=db_core.cargar_catalogo_provincias()
 
 
 def limpiar_formulario():
@@ -140,33 +140,75 @@ def guardar_db_datos_limpios():
         direccion=clientes_view.direccion_cliente.value.strip()
     #Flata registrar un vehiculo, campo obligatorio para mostrar reportes, si no esta asociado a un vehiculo este presentara una alerta
 
-    db_table=clientes_db.cliente_table()
-    resultado= db_table.guardar_clientes(cedula, nombres, apellidos, telefono, correo, provincia, ciudad, direccion)
+    resultado,ultimo_id=clientes_db.guardar_clientes(cedula, nombres, apellidos, telefono, correo, provincia, ciudad, direccion)
     
-    return resultado
+    return resultado,ultimo_id
     
 def provincia_change(e):
     pro=clientes_view.provincias.value
     id_prov = next((p[0] for p in provincias if p[1] == pro), None)
     
-    ciudades= db_core.conn_db.cargar_catalogo_ciudades(id_prov)
+    ciudades= db_core.cargar_catalogo_ciudades(id_prov)
     
     clientes_view.ciudades.options=[ft.dropdown.Option(text= c[1],style= ft.TextStyle(color="black")) for c in ciudades]
     clientes_view.ciudades.value=None
 
-def guardar_datos_clientes(e):
+#Permite asiganr los valores al dropdown para que no exista ningun problema al validar
+def autollenado_dropdown(value):
+    dropdown=vehiculos_view.propietario_vehiculo
+    dropdown.value = str(value)
+    for opt in dropdown.options:
+        if str(opt.key) == str(value):
+            dropdown.text = opt.text
+            break
+
+def guardar_datos_clientes(e, cerrar_dialog=False):
     validacion= validacion_general()
     if validacion==True:
-        se_guardo_en_db= guardar_db_datos_limpios()
+        se_guardo_en_db,nuevo_id= guardar_db_datos_limpios()
         if se_guardo_en_db == True:
             e.page.run_task(save_alert,e)
-            clientes_view.cambiar_vista(clientes_view.listado_clientes())
+            if cerrar_dialog== False:
+                clientes_view.cambiar_vista(clientes_view.listado_clientes())
+            else:
+                vehiculos_view.cargar_catalogos()
+                autollenado_dropdown(nuevo_id)
+                e.page.pop_dialog()
+                limpiar_formulario()
         else:
             e.page.run_task(alerta_error, e,"Verifique si la cedula ya existe en el sistema")
 
 
 def obtener_datos_clientes():
-    return clientes_db.cliente_table.mostrar_clientes_registrados()
+    clientes={}
+    for c in clientes_db.mostrar_clientes_registrados():
+        id_cliente=c[0]
+        if id_cliente not in clientes:
+            clientes[id_cliente]={
+                "id_cliente": id_cliente,
+                "CEDULA": c[1],
+                "NOMBRES": c[2],
+                "APELLIDOS": c[3],
+                "TELEFONO": c[4],
+                "CORREO": c[5],
+                "PROVINCIA": c[6],
+                "CIUDAD": c[7],
+                "DIRECCION": c[8],
+                "VEHICULOS": []
+            }
+            
+        if c[9]: 
+            vehiculo = {
+                "id_vehiculo": c[9],
+                "PLACA": c[10],
+                "MODELO": c[11],
+                "TIPO": c[12],
+            }
+            if not any(v["id_vehiculo"] == c[9] for v in clientes[id_cliente]["VEHICULOS"]):
+                clientes[id_cliente]["VEHICULOS"].append(vehiculo)
+
+            
+    return clientes
 
 def editar_datos_clientes():
     cedula=clientes_view.cedula_cliente.value.strip()
@@ -186,8 +228,7 @@ def editar_datos_clientes():
     id=clientes_view.id_actual
     #Flata registrar un vehiculo, campo obligatorio para mostrar reportes, si no esta asociado a un vehiculo este presentara una alerta
 
-    db_table=clientes_db.cliente_table()
-    resultado= db_table.editar_datos_clientes(cedula, nombres, apellidos, telefono, correo, provincia, ciudad, direccion,id)
+    resultado= clientes_db.editar_datos_clientes(cedula, nombres, apellidos, telefono, correo, provincia, ciudad, direccion,id)
     
     return resultado
 
@@ -200,7 +241,8 @@ def guardar_datos_modificados(e):
             
             e.page.pop_dialog()
             
-            nuevo_item=clientes_db.cliente_table().obtener_por_id(clientes_view.id_actual)
+            datos=obtener_datos_clientes()
+            nuevo_item=datos[clientes_view.id_actual]
             clientes_view.cambiar_vista(
                 clientes_view.detalles_clientes(nuevo_item)
             )
@@ -209,5 +251,5 @@ def guardar_datos_modificados(e):
 
 def eliminar_datos_cliente():
    id=clientes_view.id_actual
-   clientes_db.cliente_table.eliminar_clientes(id)
+   clientes_db.eliminar_clientes(id)
    clientes_view.cambiar_vista(clientes_view.listado_clientes())

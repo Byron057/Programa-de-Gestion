@@ -280,7 +280,9 @@ def agregar_clientes():
     )
 
 def crear_tarjeta(item):
-    
+
+    ultima_placa= item["VEHICULOS"][-1]["PLACA"] if item["VEHICULOS"] else "Sin Vehiculo"
+    print(item["VEHICULOS"])
     return ft.Card(
         elevation=5,
         shadow_color=ft.Colors.WHITE,
@@ -292,12 +294,12 @@ def crear_tarjeta(item):
             content=ft.ListTile(
                 leading=ft.Icon(icon=ft.Icons.PERSON, size=50),
                 title=ft.Text(
-                value=f"{item[3]} {item[2]}",
+                value=f"{item["APELLIDOS"]} {item["NOMBRES"]}",
                 color=ft.Colors.BLACK,
                 weight=ft.FontWeight.W_500
                 ),
                 subtitle=ft.Text(
-                    value=f"Cedula: {item[1]}    Telefono: {item[4]}    Vehiculo: [agregar en el futuro]",
+                    value=f"Cedula: {item["CEDULA"]}    Telefono: {item["TELEFONO"]}    Vehiculo: {ultima_placa}",
                     color=ft.Colors.BLACK,
                     weight=ft.FontWeight.W_400
                 ),
@@ -316,8 +318,8 @@ def tabla_clientes_registrados():
     def actualizar_lista(e=None):
         busqueda=barra_busqueda.value.lower().strip()
         lista_resultados.controls.clear()
-        for cliente in datos:
-            if busqueda in cliente[2].lower() or busqueda in cliente[3].lower() or busqueda in cliente[1]:
+        for cliente in datos.values():
+            if busqueda in cliente["NOMBRES"].lower() or busqueda in cliente["APELLIDOS"].lower() or busqueda in cliente["CEDULA"]:
                 nueva_tarjeta=crear_tarjeta(cliente)
                 lista_resultados.controls.append(nueva_tarjeta)
                 
@@ -363,7 +365,7 @@ def tabla_clientes_registrados():
     
 def detalles_clientes(item):
     global id_actual
-    id_actual=item[0]
+    id_actual=item["id_cliente"]
     boton_editar=ft.Button(
         content=Text("Editar", 20, ft.Colors.WHITE),
         bgcolor=ft.Colors.BLUE_600,
@@ -418,29 +420,29 @@ def detalles_clientes(item):
             ft.Row(
                 spacing=12,
                 controls=[
-                    campo(ft.Icons.PERSON, "Nombres", item[2]),
-                    campo(ft.Icons.PERSON_OUTLINE, "Apellidos", item[3])
+                    campo(ft.Icons.PERSON, "Nombres", item["NOMBRES"]),
+                    campo(ft.Icons.PERSON_OUTLINE, "Apellidos", item["APELLIDOS"])
                 ]
             ),
             ft.Row(
                 spacing=12,
                 controls=[
-                    campo(ft.Icons.BADGE, "Cédula", item[1]),
-                    campo(ft.Icons.PHONE, "Teléfono", item[4])
+                    campo(ft.Icons.BADGE, "Cédula", item["CEDULA"]),
+                    campo(ft.Icons.PHONE, "Teléfono", item["TELEFONO"])
                 ]
             ),
             ft.Row(
                 spacing=12,
                 controls=[
-                    campo(ft.Icons.EMAIL, "Correo", item[5]),
-                    campo(ft.Icons.LOCATION_ON, "Provincia", item[6])
+                    campo(ft.Icons.EMAIL, "Correo", item["CORREO"]),
+                    campo(ft.Icons.LOCATION_ON, "Provincia", item["PROVINCIA"])
                 ]
             ),
             ft.Row(
                 spacing=12,
                 controls=[
-                    campo(ft.Icons.MAP, "Ciudad", item[7]),
-                    campo(ft.Icons.HOME, "Dirección", item[8])
+                    campo(ft.Icons.MAP, "Ciudad", item["CIUDAD"]),
+                    campo(ft.Icons.HOME, "Dirección", item["DIRECCION"])
                 ]
             ),
         ]
@@ -464,7 +466,7 @@ def detalles_clientes(item):
                                 on_click=lambda e: cambiar_vista(listado_clientes())
                             ),
                             ft.Text(
-                                "Detalles del Personal",
+                                "Detalles del Cliente",
                                 size=20,
                                 weight="bold",
                                 color=ft.Colors.BLACK
@@ -510,7 +512,7 @@ def detalles_clientes(item):
             ]
         )
     )
-    
+
 def listado_clientes():
     #misma logica que se estructuro para el listado de vehiculos
     return ft.Container(
@@ -539,19 +541,19 @@ def listado_clientes():
 
 
 def editar_clientes(e,item):
+    formulario.shadow=None
+    nombres_cliente.value=item["NOMBRES"]
+    apellidos_cliente.value=item["APELLIDOS"]
+    cedula_cliente.value=item["CEDULA"]
+    numero_telefono_cliente.value=item["TELEFONO"]
+    correo_cliente.value=item["CORREO"]
+    provincias.value=item["PROVINCIA"]
+    ctr_cln.provincia_change(item["PROVINCIA"])
+    ciudades.value=item["CIUDAD"]
+    direccion_cliente.value=item["DIRECCION"]
+    form_global_clientes(e)
     boton_cancelar.on_click= lambda e: e.page.pop_dialog()
     boton_guardar.on_click= lambda : ctr_cln.guardar_datos_modificados(e)
-    formulario.shadow=None
-    nombres_cliente.value=item[2]
-    apellidos_cliente.value=item[3]
-    cedula_cliente.value=item[1]
-    numero_telefono_cliente.value=item[4]
-    correo_cliente.value=item[5]
-    provincias.value=item[6]
-    ctr_cln.provincia_change(item[6])
-    ciudades.value=item[7]
-    direccion_cliente.value=item[8]
-    form_global_clientes(e)
     
 
 def view_clientes(page: ft.Page):
@@ -562,8 +564,9 @@ def view_clientes(page: ft.Page):
 
 
 def form_global_clientes(e):
-    #prueba para ver el funcionamiento, debe agregarse botones de cancelar y guardar
-    #ademas los campos se deben llenar automaticamente coon la info ya registrada para poder editar
+    boton_cancelar.on_click= lambda e: e.page.pop_dialog()
+    boton_guardar.on_click= lambda : ctr_cln.guardar_datos_clientes(e,True)
+    formulario.shadow=None
     formulario_global=e.page.show_dialog(
         ft.AlertDialog(
             modal=True,

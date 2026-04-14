@@ -38,6 +38,7 @@ def validacion_general():
     propietario_text=vehiculos_view.propietario_vehiculo.text
     
     opciones= vehiculos_view.propietario_vehiculo.options
+    
     textos_validos=[opt.text for opt in opciones]
     
     if not marca_veh:
@@ -93,14 +94,12 @@ def validacion_general():
         vehiculos_view.propietario_vehiculo.value = None
         vehiculos_view.propietario_vehiculo.value= None
         vehiculos_view.propietario_vehiculo.error_text = None
-
     elif propietario_text not in textos_validos:
         vehiculos_view.propietario_vehiculo.error_text = "Seleccione un propietario válido"
         validacion = False
     else:
         vehiculos_view.propietario_vehiculo.error_text = None
         
-    
     return validacion
 
 def guardar_datos_limpios_vehiculo():

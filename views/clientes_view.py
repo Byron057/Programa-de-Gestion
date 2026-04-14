@@ -281,8 +281,7 @@ def agregar_clientes():
 
 def crear_tarjeta(item):
 
-    ultima_placa= item["VEHICULOS"][-1]["PLACA"] if item["VEHICULOS"] else "Sin Vehiculo"
-    print(item["VEHICULOS"])
+    vehiculos_registrados= len(item["VEHICULOS"]) if item["VEHICULOS"] else "Sin Vehiculo"
     return ft.Card(
         elevation=5,
         shadow_color=ft.Colors.WHITE,
@@ -299,7 +298,7 @@ def crear_tarjeta(item):
                 weight=ft.FontWeight.W_500
                 ),
                 subtitle=ft.Text(
-                    value=f"Cedula: {item["CEDULA"]}    Telefono: {item["TELEFONO"]}    Vehiculo: {ultima_placa}",
+                    value=f"Cedula: {item["CEDULA"]}    Telefono: {item["TELEFONO"]}    Vehiculo: {vehiculos_registrados}",
                     color=ft.Colors.BLACK,
                     weight=ft.FontWeight.W_400
                 ),
@@ -362,6 +361,8 @@ def tabla_clientes_registrados():
             ]
         )
     )
+
+
     
 def detalles_clientes(item):
     global id_actual
@@ -383,6 +384,56 @@ def detalles_clientes(item):
         alignment=ft.Alignment.CENTER,
         content=ft.Icon(ft.Icons.PERSON, size=150, color=ft.Colors.GREY_400)
     )
+    
+    def crear_tarjeta(item):
+        placa=item["VEHICULOS"][0]["PLACA"]
+        return ft.Card(
+            elevation=5,
+            shadow_color=ft.Colors.WHITE,
+            content=ft.Container(
+                bgcolor=ft.Colors.GREY_100,
+                padding=3,
+                border=ft.border.all(2, ft.Colors.BLACK),
+                border_radius=10,
+                content=ft.ListTile(
+                    leading=ft.Icon(icon=ft.Icons.CAR_REPAIR, size=50),
+                    title=ft.Text(
+                    value=f"{placa}",
+                    color=ft.Colors.BLACK,
+                    weight=ft.FontWeight.W_500
+                    ),
+                    subtitle=ft.Text(
+                        value=f"TIPO:   Modelo: " ,
+                        color=ft.Colors.BLACK,
+                        weight=ft.FontWeight.W_400
+                    ),
+                    bgcolor=ft.Colors.GREY_100,
+                )
+            )
+        )
+            
+    def vehiculos_registrados(item):
+        
+        vehiculos=ft.Column()
+        sin_vehiculo=ft.Text(
+            "No Existen Vehiculos Registrados a Este Cliente",
+            size=20,
+            color=ft.Colors.GREY_400
+        )
+        if item["VEHICULOS"]:
+            for v in item["VEHICULOS"]:
+                vehiculo_registrado=crear_tarjeta(item)
+                vehiculos.controls.append(vehiculo_registrado)
+        else:
+            vehiculos.controls.append(sin_vehiculo)  
+        return ft.Column(
+            expand=True,
+            controls=[
+                vehiculos
+            ]
+        )
+    
+
     def campo(icono, titulo, valor):
         return ft.Container(
             expand=True,
@@ -500,9 +551,16 @@ def detalles_clientes(item):
                                             alignment=ft.MainAxisAlignment.END,
                                             controls=[
                                                 boton_editar,
-                                                boton_eliminar
+                                                boton_eliminar,
                                             ]
                                         ),
+                                        ft.Text(
+                                            "Vehiculos Registrados",
+                                            size=20,
+                                            weight="bold",
+                                            color=ft.Colors.GREY_800
+                                        ),
+                                        vehiculos_registrados(item)
                                     ]
                                 )
                             )

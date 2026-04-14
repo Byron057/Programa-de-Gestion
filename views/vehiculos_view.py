@@ -6,6 +6,7 @@ import datetime as dt
 import os
 from controls import controls_catalogos_vehiculos as ctr_cat_veh
 from controls import controls_vehiculos as ctr_veh
+from controls import controls_reparaciones as ctr_rep
 from views import reparaciones_view 
 from views import clientes_view
 
@@ -41,13 +42,15 @@ def cargar_catalogos():
             key=c["id_cliente"], text=f"{c['CEDULA']} - {c['APELLIDOS']} {c['NOMBRES']}", style=(ft.TextStyle(color="black"))
         ) for c in ctr_cat_veh.mostrar_clientes().values()
     ]
+
 def cambiar_vista(nueva_vista):
     cargar_catalogos()
     ctr_veh.limpiar_formulario()
+    ctr_rep.interfaz_checkbox_vehiculos()
+    reparaciones_view.guardar_imagenes_vehiculos()
     pantalla_vehiculos.controls.clear()
     pantalla_vehiculos.controls.append(nueva_vista)
     pantalla_vehiculos.update()    
-
 #variables que se usan para la interfax el formulario del vehiculo
 boton_cancelar= ft.Button(
     content=Text("Cancelar",20, ft.Colors.BLACK),
@@ -68,7 +71,7 @@ boton_guardar=ft.Button(
         },
         shape=ft.RoundedRectangleBorder(radius=1)
     ),
-    on_click= lambda e: ctr_veh.guardar_datos_vehiculos(e)
+    on_click= lambda e:[ ctr_veh.guardar_datos_vehiculos(e)]
 )
 marca_vehiculo= ft.Dropdown(
     width=300,
@@ -162,6 +165,7 @@ propietario_vehiculo=ft.Dropdown(
     border_color=ft.Colors.BLACK,
     color=ft.Colors.BLACK,
     editable=True,
+    enable_filter=True,
     on_blur= lambda e: validar_dropdown(),
     bgcolor=ft.Colors.WHITE,
     error_style=ft.TextStyle(
@@ -191,7 +195,7 @@ checkbox_agregar_reparacion=ft.Checkbox(
     value=True,
     label_style=ft.TextStyle(color=ft.Colors.BLACK),
     border_side=ft.BorderSide(2,ft.Colors.BLACK),
-    on_change=reparaciones_view.interfaz_checkbox_vehiculos
+    on_change=ctr_rep.interfaz_checkbox_vehiculos
 )
 row_chekbox=ft.Row(
     spacing=30,
@@ -343,7 +347,7 @@ def agregar_vehículo():
 
 
 def crear_tarjeta(item):
-    cedula= item["PROPIETARIO"][-1]["CEDULA"] if item["PROPIETARIO"] else "Sin Popietario"
+    cedula= item["PROPIETARIO"][0]["CEDULA"] if item["PROPIETARIO"] else "Sin Popietario"
     return ft.Card(
         elevation=5,
         shadow_color=ft.Colors.WHITE,
@@ -370,7 +374,7 @@ def crear_tarjeta(item):
         )
 )
 
-def tabla_clientes_registrados():
+def tabla_vehiculos_registrados():
      
     datos=ctr_veh.obtener_datos_vehiculos()
     
@@ -625,7 +629,7 @@ def listado_vehiculos():
                         ]
                     ),
                 ft.Divider(height=10, color=ft.Colors.BLACK),
-                tabla_clientes_registrados()
+                tabla_vehiculos_registrados()
             ]
         )
     )
@@ -643,7 +647,6 @@ def editar_veh(e,item):
     tipo_vehiculo.value=item["TIPO"]
     color_vehiculo.value=item["COLOR"]
     propietario_vehiculo.value=item["id_cliente"]
-    print(item["id_cliente"])
     form_global_veh(e)
     boton_cancelar.on_click= lambda e: e.page.pop_dialog()
     boton_guardar.on_click= lambda e: ctr_veh.guardar_datos_editados(e)

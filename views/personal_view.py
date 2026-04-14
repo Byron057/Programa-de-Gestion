@@ -72,12 +72,11 @@ def construir_stack_foto(foto_seleccionada):
         ]
     )
 
+
 async def  seleccionar_foto(e):
     global ruta_anterior
     
-    
     file_picker=ft.FilePicker()
-    
     foto_seleccionada= await file_picker.pick_files(allow_multiple=False, file_type=ft.FilePickerFileType.IMAGE)
     
     if foto_seleccionada:
@@ -88,6 +87,7 @@ async def  seleccionar_foto(e):
         ruta_anterior= foto_seleccionada[0].path 
     else:
         ruta_anterior=""
+
 ruta_anterior= None
 
 def guardar_imagen():
@@ -375,9 +375,9 @@ def agregar_personal():
     )
 
 def crear_tarjeta(item):
-    if item[9]:  # si hay imagen
+    if item["FOTO"]:  # si hay imagen
         imagen = ft.Image(
-            src=item[9],
+            src=item["FOTO"],
             width=150,
             height=160,
             fit=ft.BoxFit.COVER,
@@ -404,7 +404,7 @@ def crear_tarjeta(item):
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
                 imagen,
-                ft.Text(item[2], size=18, weight="bold", color= ft.Colors.BLACK)
+                ft.Text(item["NOMBRES"], size=18, weight="bold", color= ft.Colors.BLACK)
             ]
         )
     )
@@ -418,7 +418,7 @@ def tabla_personal_registrado():
         max_extent=200,
         child_aspect_ratio=0.8,
         controls=[
-            crear_tarjeta(item) for item in datos
+            crear_tarjeta(item) for item in datos.values()
         ]
     )
     
@@ -456,7 +456,7 @@ def listado_personal():
 
 def detalles_personal(item):
     global id_actual
-    id_actual=item[0]
+    id_actual=item["id_personal"]
     
     boton_editar=ft.Button(
         content=Text("Editar", 20, ft.Colors.WHITE),
@@ -469,9 +469,9 @@ def detalles_personal(item):
         on_click= lambda e: ctr_per.eliminar_datos_personal()
     )
     
-    if item[9]:
+    if item["FOTO"]:
         imagen = ft.Image(
-            src=item[9],
+            src=item["FOTO"],
             width=150,
             height=160,
             fit=ft.BoxFit.COVER,
@@ -524,29 +524,29 @@ def detalles_personal(item):
             ft.Row(
                 spacing=12,
                 controls=[
-                    campo(ft.Icons.PERSON, "Nombres", item[2]),
-                    campo(ft.Icons.PERSON_OUTLINE, "Apellidos", item[3])
+                    campo(ft.Icons.PERSON, "Nombres", item["NOMBRES"]),
+                    campo(ft.Icons.PERSON_OUTLINE, "Apellidos", item["APELLIDOS"])
                 ]
             ),
             ft.Row(
                 spacing=12,
                 controls=[
-                    campo(ft.Icons.BADGE, "Cédula", item[1]),
-                    campo(ft.Icons.PHONE, "Teléfono", item[4])
+                    campo(ft.Icons.BADGE, "Cédula", item["CEDULA"]),
+                    campo(ft.Icons.PHONE, "Teléfono", item["TELEFONO"])
                 ]
             ),
             ft.Row(
                 spacing=12,
                 controls=[
-                    campo(ft.Icons.EMAIL, "Correo", item[5]),
-                    campo(ft.Icons.LOCATION_ON, "Provincia", item[6])
+                    campo(ft.Icons.EMAIL, "Correo", item["CORREO"]),
+                    campo(ft.Icons.LOCATION_ON, "Provincia", item["PROVINCIA"])
                 ]
             ),
             ft.Row(
                 spacing=12,
                 controls=[
-                    campo(ft.Icons.MAP, "Ciudad", item[7]),
-                    campo(ft.Icons.HOME, "Dirección", item[8])
+                    campo(ft.Icons.MAP, "Ciudad", item["CIUDAD"]),
+                    campo(ft.Icons.HOME, "Dirección", item["DIRECCION"])
                 ]
             ),
         ]
@@ -636,18 +636,18 @@ def formulario_global(e, item):
     global ruta_anterior
     formulario_personal.bgcolor=ft.Colors.WHITE
     formulario_personal.shadow=None
-    nombres_personal.value= item[2]
-    apellidos_personal.value= item[3]
-    cedula_personal.value= item[1]
-    numero_telefono_personal.value= item[4]
-    correo_personal.value=item[5]
-    provincias.value=item[6]
-    ctr_per.provincia_change(item[6])
-    ciudades.value=item[7]
-    direccion_personal.value=item[8]
-    if item[9] !="":
-        ruta_anterior=item[9]
-        construir_stack_foto(item[9])
+    nombres_personal.value= item["NOMBRES"]
+    apellidos_personal.value= item["APELLIDOS"]
+    cedula_personal.value= item["CEDULA"]
+    numero_telefono_personal.value= item["TELEFONO"]
+    correo_personal.value=item["CORREO"]
+    provincias.value=item["PROVINCIA"]
+    ctr_per.provincia_change(item["PROVINCIA"])
+    ciudades.value=item["CIUDAD"]
+    direccion_personal.value=item["DIRECCION"]
+    if item["FOTO"] !="":
+        ruta_anterior=item["FOTO"]
+        construir_stack_foto(item["FOTO"])
     else:
         foto_integrante.content= ctr_per.estado_incial_foto()
     boton_guardar.on_click=lambda e: [guardar_imagen(),ctr_per.guardar_datos_modificados(e)]

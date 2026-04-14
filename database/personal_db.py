@@ -51,14 +51,6 @@ def editar_datos_personal(cedula, nombres, apellidos, telefono, correo, provinci
         print(errore)
     return error
 
-def obtener_por_id( id):
-    conn = db_core.conectBaseDeDatos()
-    query = conn.cursor()
-    query.execute("SELECT * FROM PERSONAL WHERE id_personal=?", (id,))
-    data = query.fetchone()
-    conn.close()
-    return data
-
 def eliminar_datos_personal(id):
     try:
         conn= db_core.conectBaseDeDatos()

@@ -5,8 +5,10 @@ import os
 import views
 def inicializar_carpetas_sistema():
     ruta_fotos = os.path.join("assets", "fotos_personal")
+    ruta_imagenes_vehiculos=os.path.join("assets", "fotos_vehiculos" )
     
     os.makedirs(ruta_fotos, exist_ok=True)
+    os.makedirs(ruta_imagenes_vehiculos, exist_ok=True)
     print("Directorios del sistema verificados.")
 inicializar_carpetas_sistema()
 

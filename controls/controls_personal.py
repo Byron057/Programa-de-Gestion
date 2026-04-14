@@ -1,10 +1,10 @@
 import flet as ft 
 import re
-from views import personal_view
 from database import personal_db, db_core
 from components import *
 
 def limpiar_formulario():
+    from views import personal_view
     #reestablece los datos del formulario
     personal_view.nombres_personal.value=""
     personal_view.apellidos_personal.value=""
@@ -33,7 +33,7 @@ def limpiar_formulario():
     personal_view.nueva_ruta=None
 
 def validacion_general():
-    
+    from views import personal_view
     validacion=True
     nombres_personal=personal_view.nombres_personal.value.strip()
     apellidos_personal= personal_view.apellidos_personal.value.strip()
@@ -108,6 +108,7 @@ def validacion_general():
         
     return validacion
 def validacion_checkbox():
+    from views import personal_view
     #funcion que me permite registtrar o no un correo electronico
     personal_view.correo_personal.value = ""
     personal_view.correo_personal.error=None
@@ -123,6 +124,7 @@ def validacion_checkbox():
         personal_view.text_correo.color=ft.Colors.GREY_400
 
 def estado_incial_foto():
+    from views import personal_view
     return ft.Container(
         alignment=ft.Alignment.CENTER,
         content=ft.Column(
@@ -139,6 +141,7 @@ def estado_incial_foto():
     )
 
 def guardar_db_datos_limpios():
+    from views import personal_view
     cedula=personal_view.cedula_personal.value.strip()
     nombres= personal_view.nombres_personal.value.strip().title()
     apellidos= personal_view.apellidos_personal.value.strip().title()
@@ -163,7 +166,27 @@ def guardar_db_datos_limpios():
     
     return resultado
 
+def obtener_datos_personal():
+    peronsal={}
+    for p in personal_db.mostrar_personal_registrado():
+        id_personal=p[0]
+        if id_personal not in peronsal:
+            peronsal[id_personal]={
+                "id_personal": id_personal,
+                "CEDULA": p[1],
+                "NOMBRES": p[2],
+                "APELLIDOS": p[3],
+                "TELEFONO": p[4],
+                "CORREO": p[5],
+                "PROVINCIA": p[6],
+                "CIUDAD": p[7],
+                "DIRECCION": p[8],
+                "FOTO": p[9]
+            }
+    return peronsal
+
 def guardar_datos_personal(e):
+    from views import personal_view
     validacion=validacion_general()
     if validacion == True:
         se_guardo_en_db = guardar_db_datos_limpios()
@@ -173,11 +196,9 @@ def guardar_datos_personal(e):
         else:
             e.page.run_task(alerta_error, e,"Verifique si la cedula ya existe en el sistema")
 
-def obtener_datos_personal():
-    return personal_db.mostrar_personal_registrado()
-
 
 def editar_datos_personal():
+    from views import personal_view
     cedula=personal_view.cedula_personal.value.strip()
     nombres= personal_view.nombres_personal.value.strip().title()
     apellidos= personal_view.apellidos_personal.value.strip().title()
@@ -204,6 +225,7 @@ def editar_datos_personal():
     return resultado
 
 def guardar_datos_modificados(e):
+    from views import personal_view
     validacion=validacion_general()
     if validacion == True:
         se_guardo_en_db = editar_datos_personal()
@@ -213,8 +235,8 @@ def guardar_datos_modificados(e):
             
             e.page.run_task(save_alert,e)
             
-
-            nuevo_item = personal_db.obtener_por_id(personal_view.id_actual)
+            datos=obtener_datos_personal()
+            nuevo_item = datos[personal_view.id_actual]
 
             personal_view.cambiar_vista(
                 personal_view.detalles_personal(nuevo_item)
@@ -226,16 +248,18 @@ def guardar_datos_modificados(e):
 provincias=db_core.cargar_catalogo_provincias()
 
 def provincia_change(e):
+    from views import personal_view
     pro=personal_view.provincias.value
     id_prov = next((p[0] for p in provincias if p[1] == pro), None)
     
     ciudades= db_core.cargar_catalogo_ciudades(id_prov)
     
-    personal_view.ciudades.options=[ft.dropdown.Option(text= c[1],style= ft.TextStyle(color="black")) for c in ciudades]
+    personal_view.ciudades.options=[ft.dropdown.Option(text= p[1],style= ft.TextStyle(color="black")) for p in ciudades]
     personal_view.ciudades.value=None
 
 
 def eliminar_datos_personal():
+    from views import personal_view
     id=personal_view.id_actual
     personal_db.eliminar_datos_personal(id)
     personal_view.cambiar_vista(personal_view.listado_personal())

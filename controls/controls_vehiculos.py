@@ -7,16 +7,20 @@ from components import *
 
 
 def limpiar_formulario():
+    vehiculos_view.marca_vehiculo.text=""
     vehiculos_view.marca_vehiculo.value=""
     vehiculos_view.marca_vehiculo.error_text=None
+    vehiculos_view.modelo_vehiculo.text=""
     vehiculos_view.modelo_vehiculo.value=""
     vehiculos_view.modelo_vehiculo.error_text=None
     vehiculos_view.placa_vehiculo.value=""
     vehiculos_view.placa_vehiculo.error=None
     vehiculos_view.año_vehiculo.value=""
     vehiculos_view.año_vehiculo.error=None
+    vehiculos_view.tipo_vehiculo.text=""
     vehiculos_view.tipo_vehiculo.value=""
     vehiculos_view.tipo_vehiculo.error_text=None
+    vehiculos_view.color_vehiculo.text=""
     vehiculos_view.color_vehiculo.value=""
     vehiculos_view.color_vehiculo.error_text=None
     vehiculos_view.propietario_vehiculo.value=None
@@ -40,6 +44,7 @@ def validacion_general():
     opciones= vehiculos_view.propietario_vehiculo.options
     
     textos_validos=[opt.text for opt in opciones]
+    print(propietario_text)
     
     if not marca_veh:
         vehiculos_view.marca_vehiculo.error_text="Campo Obligatorio"
@@ -90,11 +95,12 @@ def validacion_general():
         vehiculos_view.color_vehiculo.error_text=None
     
     #cambie por value si en el futuro da algun error antes estaba como text 
-    if not propietario_value:
-        vehiculos_view.propietario_vehiculo.value = None
+    if not propietario_text:
+        vehiculos_view.propietario_vehiculo.text= None
         vehiculos_view.propietario_vehiculo.value= None
         vehiculos_view.propietario_vehiculo.error_text = None
     elif propietario_text not in textos_validos:
+        vehiculos_view.propietario_vehiculo.value= None
         vehiculos_view.propietario_vehiculo.error_text = "Seleccione un propietario válido"
         validacion = False
     else:

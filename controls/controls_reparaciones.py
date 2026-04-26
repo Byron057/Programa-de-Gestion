@@ -1,5 +1,6 @@
 import flet as ft 
 from views import reparaciones_view
+from components import *
 
 def limpiar_lista_reparaciones():
     for fila in reparaciones_view.lista_reparaciones.controls[:]:
@@ -51,12 +52,17 @@ def cambiar_color_reparaciones(color_boton, disabled_boton, color_textfield, dis
     for fila in reparaciones_view.lista_reparaciones.controls[:]:
         boton= fila.controls[2]
         textfield= fila.controls[0]
+        text_field_precio=fila.controls[1]
         
         boton.color=color_boton
         boton.disabled= disabled_boton
         
         textfield.color= color_textfield
         textfield.read_only= disabled_textfield
+        
+        text_field_precio.color=color_textfield
+        text_field_precio.read_only= disabled_textfield
+        text_field_precio.suffix=Text("$", 20, color_textfield)
         
 
 def interfaz_checkbox_vehiculos():
@@ -67,7 +73,7 @@ def interfaz_checkbox_vehiculos():
     reparaciones_view.siguiente_kilometraje.value=""
     reparaciones_view.personal_encargado.value=None
     reparaciones_view.personal_encargado.text=None
-    reparaciones_view.precio_reaparacion.value=""
+    reparaciones_view.precio_total_reaparacion.value=""
     reparaciones_view.lista_imagenes.controls.clear()
     reparaciones_view.imagenes_seleccionadas.clear()
     reparaciones_view.nuevas_rutas_imagenes.clear()
@@ -96,10 +102,10 @@ def interfaz_checkbox_vehiculos():
         reparaciones_view.text_personal_encargado.color=ft.Colors.BLACK
         reparaciones_view.personal_encargado.disabled=False
         
-        reparaciones_view.text_precio_reparacion.color=ft.Colors.BLACK
-        reparaciones_view.precio_reaparacion.color=ft.Colors.BLACK
+        reparaciones_view.text_precio_total.color=ft.Colors.BLACK
+        reparaciones_view.precio_total_reaparacion.color=ft.Colors.BLACK
         reparaciones_view.suffix_precio_reparacion.color=ft.Colors.BLACK
-        reparaciones_view.precio_reaparacion.read_only=False
+        reparaciones_view.precio_total_reaparacion.read_only=False
         
         reparaciones_view.suffix_siguiente_kilometraje.color=ft.Colors.BLACK
         reparaciones_view.text_siguiente_kilometraje.color=ft.Colors.BLACK
@@ -130,10 +136,10 @@ def interfaz_checkbox_vehiculos():
         reparaciones_view.text_personal_encargado.color=ft.Colors.GREY_400
         reparaciones_view.stack_personal_encargaado.controls[1].visible=True
         
-        reparaciones_view.text_precio_reparacion.color=ft.Colors.GREY_400
-        reparaciones_view.precio_reaparacion.color=ft.Colors.GREY_400
+        reparaciones_view.text_precio_total.color=ft.Colors.GREY_400
+        reparaciones_view.precio_total_reaparacion.color=ft.Colors.GREY_400
         reparaciones_view.suffix_precio_reparacion.color=ft.Colors.GREY_400
-        reparaciones_view.precio_reaparacion.read_only=True
+        reparaciones_view.precio_total_reaparacion.read_only=True
         
         reparaciones_view.suffix_kilometraje_actual.color=ft.Colors.GREY_400
         reparaciones_view.text_kilometraje_actual.color=ft.Colors.GREY_400

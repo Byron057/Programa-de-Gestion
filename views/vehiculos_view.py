@@ -102,7 +102,7 @@ modelo_vehiculo= ft.Dropdown(
         color=ft.Colors.RED_ACCENT_700,
         weight=ft.FontWeight.W_500,
         font_family="Roboto-Medium"
-    )
+    ),
     
 )
 placa_vehiculo=ft.TextField(

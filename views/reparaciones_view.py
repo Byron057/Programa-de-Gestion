@@ -72,7 +72,7 @@ calendario_entrega=ft.IconButton(
 )
 fecha_entrega=ft.TextField(
     hint_text="DD/MM/YYYY",
-    height=50,
+    height=49,
     suffix=calendario_entrega,
     value=fecha_actual,
     color=ft.Colors.BLACK,
@@ -116,14 +116,41 @@ stack_personal_encargaado=ft.Stack(
         ]
     )
 
+def validar_text_recio(e):
+    valor = e.control.value or ""
+    
+    if valor == "":
+        return
+
+    resultado = ""
+    punto_usado = False
+
+    for c in valor:
+        if c.isdigit():
+            resultado += c
+        elif c == "." and not punto_usado:
+            resultado += c
+            punto_usado = True
+
+    if "." in resultado:
+        parte_entera, parte_decimal = resultado.split(".", 1)
+        resultado = parte_entera + "." + parte_decimal[:2]
+
+    if valor != resultado:
+        e.control.value = resultado
+        e.control.update()
+
+
 suffix_precio_reparacion=Text("$", 20, ft.Colors.BLACK)
-text_precio_reparacion=Text("Precio", 20, ft.Colors.BLACK,"w400")
-precio_reaparacion=ft.TextField(
+text_precio_total=Text("Precio Total", 20, ft.Colors.BLACK,"w400")
+precio_total_reaparacion=ft.TextField(
     hint_text="25",
-    suffix=suffix_precio_reparacion,
     color=ft.Colors.BLACK,
     border_color=ft.Colors.BLACK,
-    read_only=False
+    on_change= lambda e: validar_text_recio(e),
+    read_only=False,
+    suffix=suffix_precio_reparacion,
+    height=50
 )
 
 def calcular_kilometraje():
@@ -151,7 +178,12 @@ kilometraje_actual=ft.TextField(
     suffix=suffix_kilometraje_actual,
     border_color=ft.Colors.BLACK,
     color=ft.Colors.BLACK,
-    read_only=False
+    read_only=False,
+    error_style=ft.TextStyle(
+        color=ft.Colors.RED_ACCENT_700,
+        weight=ft.FontWeight.W_500,
+        font_family="Roboto-Medium"
+    )
 )
 
 suffix_siguiente_kilometraje=Text("km", 20, ft.Colors.BLACK)
@@ -179,17 +211,24 @@ def actualizar_boton_reparaciones():
         ft.ControlState.DEFAULT: ft.Colors.GREEN_400,
         ft.ControlState.DISABLED: ft.Colors.GREY_400
     }
-#REGISTRA EN LA TABLA DETALLES_REPARACION TODO EXCEPTO LOS REPUESTOS Y TRABAJOS
-#EL APARTADO DE REPUESTO VA EN UN ARCHIVO DIFERENTE YA QUE ESTOS TAMBIEN VN A TEER UN CRUD LA ESTRUCTURA ES LA SIGUIENTE\N
-#"UN DROPDOWN QUE VA A REGISTRAR MARCAS, UN DROPDOWN QUE VA A REGISTRAR REPUESTOS, UN DROPDOWN QUE VA A REGISTRAR ALMACEN"\N
-#"TODO ESTO VA A SER COMO UN CATALOGO Y EN EL APARTADO DE REPUESTOS USADOS OCUPA FOREIGN KEYY DE ESTOS DROPDOWN Y DE LOS DETALLES DE REPARACION"
 def crear_campo_reparacion():
     text=ft.TextField(
         hint_text="Detalles de la reparación realizada",
         border_color=ft.Colors.BLACK,
-        width=600,
+        width=410,
         color=ft.Colors.BLACK,
         read_only=False
+    )
+    precio=ft.TextField(
+        hint_text="Precio",
+        border_color=ft.Colors.BLACK,
+        width=196,
+        height=49,
+        color=ft.Colors.BLACK,
+        on_change=lambda e: (validar_text_recio(e), calcular_precio_total()),
+        keyboard_type=ft.KeyboardType.NUMBER,
+        read_only=False,
+        suffix=Text("$", 20, ft.Colors.BLACK)
     )
     boton_general=ft.IconButton(
         icon=ft.Icons.ADD,
@@ -201,9 +240,10 @@ def crear_campo_reparacion():
     )
     fila=ft.Row(
         alignment=ft.MainAxisAlignment.CENTER,
+        spacing=15,
         controls=[
             text,
-            ft.VerticalDivider(),
+            precio,
             boton_general
         ]
     )
@@ -213,11 +253,32 @@ def crear_campo_reparacion():
         else:
             if len(lista_reparaciones.controls) > 1:
                 lista_reparaciones.controls.remove(fila)
+                calcular_precio_total()
         actualizar_boton_reparaciones()
     
     boton_general.on_click=acccion_boton
     
     return fila
+
+def calcular_precio_total():
+    precios_recolectados=[]
+    for fila in lista_reparaciones.controls[:]:
+        precio=fila.controls[1]
+        try:
+            precio.error=None
+            if precio.value != "":
+                precios_recolectados.append(float(precio.value))
+        except:
+            pass
+    suma_total=sum(precios_recolectados)
+    if suma_total != 0:
+        if suma_total.is_integer():
+            precio_total_reaparacion.value=str(int(suma_total))
+        else:  
+            precio_total_reaparacion.value=f"{suma_total:.2f}"
+    else:
+        precio_total_reaparacion.value=""
+    
 
 def actualizar_boton_repuestos():
     for fila in lista_repuestos.controls:
@@ -345,7 +406,7 @@ def crear_campo_repuestos():
 text_reparaciones=Text("Reparaciones Realizadas", 20, ft.Colors.BLACK, "w400")
 text_repuestos=Text("Repuestos Utilizados", 20, ft.Colors.BLACK, "w400")
 
-lista_reparaciones=ft.Column()
+lista_reparaciones=ft.Column(spacing=10)
 lista_reparaciones.controls.append(crear_campo_reparacion())
 actualizar_boton_reparaciones()
 
@@ -486,8 +547,8 @@ formulario_reparaciones=ft.Column(
                 ft.VerticalDivider(),
                 ft.Column(
                     controls=[
-                        text_precio_reparacion,
-                        precio_reaparacion
+                        text_precio_total,
+                        precio_total_reaparacion
                     ]
                 )
                 

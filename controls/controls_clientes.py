@@ -201,8 +201,9 @@ def obtener_datos_clientes():
             vehiculo = {
                 "id_vehiculo": c[9],
                 "PLACA": c[10],
-                "MODELO": c[11],
-                "TIPO": c[12],
+                "MARCA": c[11],
+                "MODELO": c[12],
+                "TIPO": c[13],
             }
             if not any(v["id_vehiculo"] == c[9] for v in clientes[id_cliente]["VEHICULOS"]):
                 clientes[id_cliente]["VEHICULOS"].append(vehiculo)

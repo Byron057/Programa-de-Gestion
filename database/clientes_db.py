@@ -39,12 +39,14 @@ def mostrar_clientes_registrados():
                 
                 V.id_vehiculo,
                 V.PLACA,
+                MAR.MARCA,
                 MOD.MODELO,
                 TIP.TIPO
                 
             FROM CLIENTES C
             LEFT JOIN VEHICULOS V ON C.id_cliente = V.id_cliente
             LEFT JOIN MODELOS_VEHICULOS MOD ON V.id_modelo = MOD.id_modelo
+            LEFT JOIN MARCAS_VEHICULOS MAR ON V.id_marca = MAR.id_marca
             LEFT JOIN TIPOS_VEHICULOS TIP ON V.id_tipo = TIP.id_tipo
             WHERE C.ESTADO = "activo"
             ORDER BY C.APELLIDOS ASC;

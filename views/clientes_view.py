@@ -387,6 +387,9 @@ def detalles_clientes(item):
     
     def crear_tarjeta(item):
         placa=item["VEHICULOS"][0]["PLACA"]
+        tipo=item["VEHICULOS"][0]["TIPO"]
+        marca=item["VEHICULOS"][0]["MARCA"]
+        modelo=item["VEHICULOS"][0]["MODELO"]
         return ft.Card(
             elevation=5,
             shadow_color=ft.Colors.WHITE,
@@ -403,7 +406,7 @@ def detalles_clientes(item):
                     weight=ft.FontWeight.W_500
                     ),
                     subtitle=ft.Text(
-                        value=f"TIPO:   Modelo: " ,
+                        value=f"Tipo: {tipo}    Marca: {marca}    Modelo: {modelo} " ,
                         color=ft.Colors.BLACK,
                         weight=ft.FontWeight.W_400
                     ),

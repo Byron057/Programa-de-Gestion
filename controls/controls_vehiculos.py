@@ -3,8 +3,8 @@ from views import vehiculos_view
 import re
 from database import vehiculos_db, catalogos_vehiculos_db, clientes_db
 from controls import controls_catalogos_vehiculos
+from controls import controls_reparaciones as ctr_rep
 from components import *
-
 
 def limpiar_formulario():
     vehiculos_view.marca_vehiculo.text=""
@@ -44,7 +44,6 @@ def validacion_general():
     opciones= vehiculos_view.propietario_vehiculo.options
     
     textos_validos=[opt.text for opt in opciones]
-    print(propietario_text)
     
     if not marca_veh:
         vehiculos_view.marca_vehiculo.error_text="Campo Obligatorio"
@@ -136,9 +135,9 @@ def guardar_datos_limpios_vehiculo():
         (co[0] for co in catalogos_vehiculos_db.mostrar_colores() if co[1] == color),
         None
     )
-    resultado=vehiculos_db.guardar_vehiculos(id_cliente, id_marca, id_modelo, placa, year, id_tipo, id_color)
+    resultado,id_vehiculo_registrado=vehiculos_db.guardar_vehiculos(id_cliente, id_marca, id_modelo, placa, year, id_tipo, id_color)
     
-    return True
+    return resultado, id_vehiculo_registrado
     
 def obtener_datos_vehiculos():
     vehiculos={}
@@ -168,18 +167,24 @@ def obtener_datos_vehiculos():
     return vehiculos
 
 def guardar_datos_vehiculos(e, cerrar_dialog=False):
-    validacion=validacion_general()
-    if validacion==True:
-        se_guardo_db= guardar_datos_limpios_vehiculo()
+    validacion_vehiculo=validacion_general()
+    if vehiculos_view.checkbox_agregar_reparacion.value==True:
+        validacion_rep=ctr_rep.validacion_general()
+    else: 
+        validacion_rep=True
+        
+    if validacion_vehiculo==True and validacion_rep==True:
+        se_guardo_db, id_vehiculo= guardar_datos_limpios_vehiculo() 
+        ctr_rep.guardar_reparaciones(id_vehiculo) 
         if se_guardo_db == True:
-            e.page.run_task(save_alert,e)
+            e.page.run_task(save_alert,e.page)
             if cerrar_dialog== False:
                 vehiculos_view.cambiar_vista(vehiculos_view.listado_vehiculos())
             else:
                 e.page.pop_dialog()
         else:
-            e.page.run_task(alerta_error,e,"Verifique si los datos ya estan en el sistema")
-            
+            e.page.run_task(alerta_error,e.page,"Verifique si los datos ya estan en el sistema")
+
 def editar_datos_vehiculo():
     controls_catalogos_vehiculos.gaurdar_datos_catalogos()
     vehiculos_view.cargar_catalogos()

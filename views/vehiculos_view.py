@@ -7,6 +7,8 @@ import os
 from controls import controls_catalogos_vehiculos as ctr_cat_veh
 from controls import controls_vehiculos as ctr_veh
 from controls import controls_reparaciones as ctr_rep
+from controls import controls_personal as ctr_per
+from database import reparaciones_db as rep_db
 from views import reparaciones_view 
 from views import clientes_view
 
@@ -42,6 +44,31 @@ def cargar_catalogos():
             key=c["id_cliente"], text=f"{c['CEDULA']} - {c['APELLIDOS']} {c['NOMBRES']}", style=(ft.TextStyle(color="black"))
         ) for c in ctr_cat_veh.mostrar_clientes().values()
     ]
+    
+    reparaciones_view.personal_encargado.options=[
+        ft.dropdown.Option(
+            text=f" {p["CEDULA"]} - {p['NOMBRES']} ", style=ft.TextStyle(color="black")
+        ) for p in ctr_per.obtener_datos_personal().values()
+    ]
+    repuestos = ctr_cat_veh.mostrar_repuestos()
+    marcas = ctr_cat_veh.mostrar_marcas_repuestos()
+    proveedores = ctr_cat_veh.mostrar_porveedores_repuestos()
+
+    for lista in reparaciones_view.lista_repuestos.controls:
+        lista.data["repuesto"].options = [
+            ft.dropdown.Option(text=rep[1], style=ft.TextStyle(color="black"))
+            for rep in repuestos
+        ]
+
+        lista.data["marca"].options = [
+            ft.dropdown.Option(text=mar[1], style=ft.TextStyle(color="black"))
+            for mar in marcas
+        ]
+
+        lista.data["proveedor"].options = [
+            ft.dropdown.Option(text=prov[1], style=ft.TextStyle(color="black"))
+            for prov in proveedores
+        ]
 
 def cambiar_vista(nueva_vista):
     cargar_catalogos()
@@ -113,7 +140,8 @@ placa_vehiculo=ft.TextField(
         color=ft.Colors.RED_ACCENT_700,
         weight=ft.FontWeight.W_500,
         font_family="Roboto-Medium"
-    )
+    ),
+    capitalization=ft.TextCapitalization.CHARACTERS
 )
 año_vehiculo=ft.TextField(
     hint_text="Ejemplo: 2007",
@@ -296,7 +324,7 @@ formulario_vehiculos=ft.Column(
 def agregar_vehículo():
     #actualiza las interacciones de los botones para poder reutilizar
     boton_cancelar.on_click= lambda e: cambiar_vista(listado_vehiculos())
-    boton_guardar.on_click= lambda e: ctr_veh.guardar_datos_vehiculos(e)
+    boton_guardar.on_click= lambda e: [ ctr_veh.guardar_datos_vehiculos(e)]
     estado_veh.visible=True
     row_chekbox.visible=True
     #aqui va lo principal que se necesita en el apartado de agregar un vehiculo, tal vez se modifique un poco para que sea mas estetico
@@ -442,7 +470,7 @@ def detalles_vehiculos(item):
     boton_eliminar=ft.Button(
         content=Text("Eliminar", 20, ft.Colors.WHITE),
         bgcolor=ft.Colors.RED_700,
-        on_click=lambda e: print(e)
+        on_click=lambda e: print("Vehiculos_view_boton_eliminar")
     )
     imagen = ft.Container(
         width=150,
@@ -661,7 +689,7 @@ def view_vehiculos(page: ft.Page):
 
 def form_global_veh(e):
     boton_cancelar.on_click= lambda e: e.page.pop_dialog()
-    boton_guardar.on_click= lambda e: ctr_veh.guardar_datos_vehiculos(e,True)
+    boton_guardar.on_click= lambda e: ctr_veh.guardar_datos_vehiculos(e,True),
     formulario_global=e.page.show_dialog(
         ft.AlertDialog(
             modal=True,

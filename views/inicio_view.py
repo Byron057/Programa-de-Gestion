@@ -3,13 +3,16 @@ from components import *
 def view_inicio(page: ft.Page):
     from controls import controls_clientes
     total_clientes=controls_clientes.total_clientes()
+    
+    def crear_tarjeta_info():
+        pass
     return ft.Container(
             expand=True,
             bgcolor=ft.Colors.WHITE,
             padding=20,
             content=ft.Column( 
                 controls=[
-                    Text("Mecánica Automotriz Velastegui",60,ft.Colors.BLACK,"w900"),
+                    Text("Nombre Local...",60,ft.Colors.BLACK,"w900"),
                     ft.Divider(height=10, color=ft.Colors.BLACK), # Espaciador
                     ft.Column(
                         controls=[
@@ -86,7 +89,7 @@ def view_inicio(page: ft.Page):
                                                             ft.Column(
                                                                 spacing=0,
                                                                 controls=[
-                                                                    Text("Productos",22,ft.Colors.WHITE),
+                                                                    Text("Vehiculos",22,ft.Colors.WHITE),
                                                                     Text("Registrados",17,ft.Colors.WHITE),
                                                                 ]
                                                             )

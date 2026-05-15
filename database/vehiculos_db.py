@@ -15,7 +15,7 @@ def guardar_vehiculos(id_cliente, id_marca, id_modelo, placa, year, id_tipo, id_
         conn.close()
         error=False
         print (e)
-    return error
+    return error, query.lastrowid
 
 def mostrar_vehiculos_registrados():
     try: 
@@ -48,6 +48,7 @@ def mostrar_vehiculos_registrados():
         return resultado
     except sqlite3.Error:
         conn.close()
+
 def editar_datos_vehiculo(id_cliente, id_marca, id_modelo, placa, year, id_tipo, id_color, id_vehiculo):
     error=True
     try:

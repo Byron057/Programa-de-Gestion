@@ -95,13 +95,8 @@ def view_dashboard(page: ft.Page):
            ]
         elif indice == 4:
             cuerpo_contenido.controls=[
-                views.view_repuestos(page)
-            ]
-        elif indice == 5:
-            cuerpo_contenido.controls=[
                 views.view_personal(page)
             ]
-        
         #Se llama a esta funcion para que se actualice de la pantalla
         actualizar_menu()
 
@@ -134,8 +129,7 @@ def view_dashboard(page: ft.Page):
             crear_boton(0, ft.Icons.HOUSE, "Inicio"),
             crear_boton(1, ft.Icons.GROUPS, "Clientes"),
             crear_boton(2, ft.Icons.DIRECTIONS_CAR, "Vehiculos"),
-            crear_boton(4, ft.Icons.INVENTORY, "Repuestos"),
-            crear_boton(5, ft.Icons.PERSON, "Personal")
+            crear_boton(4, ft.Icons.PERSON, "Personal")
         ]
     
     # Dibujamos el menú por primera vez al cargar la pantalla

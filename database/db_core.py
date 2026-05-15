@@ -171,13 +171,79 @@ def data_necesaria(db_path='gestion_mecanica.db'):
                 id_color INTEGER,
                 ESTADO TEXT DEFAULT 'activo' CHECK("ESTADO" IN ('activo', 'inactivo')),
                 
-                FOREIGN KEY (id_cliente) REFERENCES CLIENTES (id_cliente)
+                FOREIGN KEY (id_cliente) REFERENCES CLIENTES (id_cliente),
                 FOREIGN KEY (id_marca) REFERENCES MARCAS_VEHICULOS (id_marca),
                 FOREIGN KEY (id_modelo) REFERENCES MODELOS_VEHICULOS (id_modelo),
                 FOREIGN KEY (id_tipo) REFERENCES TIPOS_VEHICULOS (id_tipo),
                 FOREIGN KEY (id_color) REFERENCES COLORES (id_color)
             )
         """)
+        query.execute("""
+             CREATE TABLE IF NOT EXISTS ORDEN_REPARACION(
+                id_orden_reparacion INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_vehiculo INTEGER,
+                FECHA_INGRESO TEXT,
+                FECHA_SALIDA TEXT,
+                id_personal INTEGER,
+                PRECIO_TOTAL TEXT,
+                KILOMETRAJE_ACTUAL TEXT,
+                KILOMETRAJE_PROXIMO TEXT,
+                
+                FOREIGN KEY (id_vehiculo) REFERENCES VEHICULOS (id_vehiculo),   
+                FOREIGN KEY (id_personal) REFERENCES PERSONAL (id_personal)   
+             )
+            
+        """)
+        
+        query.execute("""
+            CREATE TABLE IF NOT EXISTS REPUESTOS(
+                id_repuesto INTEGER PRIMARY KEY AUTOINCREMENT,
+                REPUESTO TEXT UNIQUE      
+            )
+        """)
+        
+        query.execute("""
+            CREATE TABLE IF NOT EXISTS MARCA_REPUESTOS(
+                id_marca_repuesto INTEGER PRIMARY KEY AUTOINCREMENT,
+                MARCA_REPUESTO TEXT UNIQUE
+                    
+            )
+        """)
+        
+        query.execute("""
+            CREATE TABLE IF NOT EXISTS PROVEEDOR_REPUESTOS(
+                id_proveedor INTEGER PRIMARY KEY AUTOINCREMENT,
+                PROVEEDOR TEXT UNIQUE
+            )
+        """)
+        
+        query.execute("""
+            CREATE TABLE IF NOT EXISTS REPUESTOS_UTILIZADOS(
+                id_rep_uti INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_orden_reparacion INTEGER,
+                id_repuesto INTEGER,
+                id_marca_repuesto INTEGER,
+                id_proveedor INTEGER,
+                
+                FOREIGN KEY (id_orden_reparacion) REFERENCES ORDEN_REPARACION (id_orden_reparacion),
+                FOREIGN KEY (id_repuesto) REFERENCES REPUESTOS (id_repuesto),
+                FOREIGN KEY (id_marca_repuesto) REFERENCES MARCA_REPUESTOS (id_marca_repuesto),
+                FOREIGN KEY (id_proveedor) REFERENCES PROVEEDOR_REPUESTOS (id_proveedor)
+            )"""
+        )
+        query.execute("""
+            CREATE TABLE IF NOT EXISTS REPARACIONES_REALIZADAS(
+                id_reparacion INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_orden_reparacion INTEGER,
+                REPARACION TEXT,
+                PRECIO TEXT,
+            
+                FOREIGN KEY (id_orden_reparacion) REFERENCES ORDEN_REPARACION (id_orden_reparacion)
+            )
+        """            
+        )
+        
+        
         conn.commit()
         conn.close()
     except sqlite3.Error as error:

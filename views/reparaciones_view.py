@@ -3,6 +3,7 @@ from components import *
 import datetime as dt
 from views import vehiculos_view
 import controls.controls_personal as ctr_per
+import database.reparaciones_db as rep_db
 import shutil, os
 
 fecha_actual= dt.datetime.now().strftime('%d/%m/%Y')
@@ -93,6 +94,7 @@ def crear_bloqueo_dropdown(width):
 text_personal_encargado=Text("Personal Encargado", 20, ft.Colors.BLACK, "400")
 personal_encargado= ft.Dropdown(
     width=300,
+    content_padding=10,
     hint_text="Seleccione el Personal Encargado",
     border_color=ft.Colors.BLACK,
     color=ft.Colors.BLACK,
@@ -102,25 +104,17 @@ personal_encargado= ft.Dropdown(
         color=ft.Colors.RED_ACCENT_700,
         weight=ft.FontWeight.W_500,
         font_family="Roboto-Medium"
-    ),
-    options=[
-        ft.dropdown.Option(
-            text=f" {p["CEDULA"]} - {p['NOMBRES']} ", style=ft.TextStyle(color="black")
-        ) for p in ctr_per.obtener_datos_personal().values()
-    ]
+    )
 )
-stack_personal_encargaado=ft.Stack(
+stack_personal_encargado=ft.Stack(
         controls=[
             personal_encargado,
             crear_bloqueo_dropdown(300) 
         ]
     )
 
-def validar_text_recio(e):
+def validar_text_precio(e):
     valor = e.control.value or ""
-    
-    if valor == "":
-        return
 
     resultado = ""
     punto_usado = False
@@ -136,21 +130,26 @@ def validar_text_recio(e):
         parte_entera, parte_decimal = resultado.split(".", 1)
         resultado = parte_entera + "." + parte_decimal[:2]
 
-    if valor != resultado:
+    if e.control.value != resultado:
         e.control.value = resultado
         e.control.update()
 
 
-suffix_precio_reparacion=Text("$", 20, ft.Colors.BLACK)
+suffix_precio_reparacion=Text("$", 18, ft.Colors.BLACK)
 text_precio_total=Text("Precio Total", 20, ft.Colors.BLACK,"w400")
 precio_total_reaparacion=ft.TextField(
     hint_text="25",
+    content_padding=13,
     color=ft.Colors.BLACK,
     border_color=ft.Colors.BLACK,
-    on_change= lambda e: validar_text_recio(e),
+    on_change= lambda e: validar_text_precio(e),
     read_only=False,
     suffix=suffix_precio_reparacion,
-    height=50
+    error_style=ft.TextStyle(
+        color=ft.Colors.RED_ACCENT_700,
+        weight=ft.FontWeight.W_500,
+        font_family="Roboto-Medium"
+    )
 )
 
 def calcular_kilometraje():
@@ -174,6 +173,7 @@ suffix_kilometraje_actual=Text("km", 20, ft.Colors.BLACK)
 text_kilometraje_actual=Text("Kilometraje Actual", 20, ft.Colors.BLACK, "w400")
 kilometraje_actual=ft.TextField(
     hint_text="10005",
+    content_padding=10,
     on_change=calcular_kilometraje,
     suffix=suffix_kilometraje_actual,
     border_color=ft.Colors.BLACK,
@@ -190,15 +190,21 @@ suffix_siguiente_kilometraje=Text("km", 20, ft.Colors.BLACK)
 text_siguiente_kilometraje =Text("Siguiente Kilometraje", 20 ,ft.Colors.BLACK, "w400")
 siguiente_kilometraje=ft.TextField(
     hint_text="15005",
+    content_padding=10,
     suffix=suffix_siguiente_kilometraje,
     border_color=ft.Colors.BLACK,
     color=ft.Colors.BLACK,
-    read_only=False
+    read_only=False,
+    error_style=ft.TextStyle(
+        color=ft.Colors.RED_ACCENT_700,
+        weight=ft.FontWeight.W_500,
+        font_family="Roboto-Medium"
+    )
 )
 
 def actualizar_boton_reparaciones():
     for fila in lista_reparaciones.controls:
-        boton=fila.controls[2]
+        boton=fila.data["boton"]
         boton.icon=ft.Icons.DELETE
         boton.bgcolor={
         ft.ControlState.DEFAULT: ft.Colors.RED,
@@ -206,29 +212,40 @@ def actualizar_boton_reparaciones():
     }
     if lista_reparaciones.controls:
             ultima = lista_reparaciones.controls[-1]
-            ultima.controls[2].icon = ft.Icons.ADD
-            ultima.controls[2].bgcolor={
+            ultima.controls[2].controls[0].icon = ft.Icons.ADD
+            ultima.controls[2].controls[0].bgcolor={
         ft.ControlState.DEFAULT: ft.Colors.GREEN_400,
         ft.ControlState.DISABLED: ft.Colors.GREY_400
     }
 def crear_campo_reparacion():
-    text=ft.TextField(
+    reparacion=ft.TextField(
         hint_text="Detalles de la reparación realizada",
         border_color=ft.Colors.BLACK,
         width=410,
+        content_padding=10,
         color=ft.Colors.BLACK,
-        read_only=False
+        read_only=False,
+        error_style=ft.TextStyle(
+            color=ft.Colors.RED_ACCENT_700,
+            weight=ft.FontWeight.W_500,
+            font_family="Roboto-Medium"
+        )
     )
     precio=ft.TextField(
         hint_text="Precio",
         border_color=ft.Colors.BLACK,
         width=196,
-        height=49,
         color=ft.Colors.BLACK,
-        on_change=lambda e: (validar_text_recio(e), calcular_precio_total()),
+        on_change=lambda e: (validar_text_precio(e), calcular_precio_total()),
         keyboard_type=ft.KeyboardType.NUMBER,
         read_only=False,
-        suffix=Text("$", 20, ft.Colors.BLACK)
+        suffix=Text("$", 18, ft.Colors.BLACK),
+        content_padding=10,
+        error_style=ft.TextStyle(
+            color=ft.Colors.RED_ACCENT_700,
+            weight=ft.FontWeight.W_500,
+            font_family="Roboto-Medium"
+        )
     )
     boton_general=ft.IconButton(
         icon=ft.Icons.ADD,
@@ -238,15 +255,44 @@ def crear_campo_reparacion():
             ft.ControlState.DISABLED: ft.Colors.GREY_400
         }
     )
+    def crear_espacio(width, height):
+        return ft.Container(
+            width=width,
+            height=height,
+            bgcolor=ft.Colors.TRANSPARENT,
+            visible=False,
+        )
+    stack_reparacion=ft.Column(
+        controls=[
+            reparacion,
+            crear_espacio(410, 10)
+        ]
+    )
+    stack_precio=ft.Column(
+        controls=[
+            precio,
+            crear_espacio(196, 10)
+        ]
+    )
+    column_icon=ft.Column(
+        spacing=9,
+        controls=[
+            boton_general,
+            crear_espacio(40,10)
+        ]
+    )
+    
     fila=ft.Row(
         alignment=ft.MainAxisAlignment.CENTER,
         spacing=15,
         controls=[
-            text,
-            precio,
-            boton_general
+            stack_reparacion,
+            stack_precio,
+            column_icon
         ]
     )
+ 
+        
     def acccion_boton(e):
         if boton_general.icon == ft.Icons.ADD:
             lista_reparaciones.controls.append(crear_campo_reparacion())
@@ -258,14 +304,23 @@ def crear_campo_reparacion():
     
     boton_general.on_click=acccion_boton
     
+    fila.data={
+        "reparacion": reparacion,
+        "precio": precio,
+        "boton": boton_general,
+        
+        "espacio_reparacion": stack_reparacion.controls[1],
+        "espacio_precio": stack_precio.controls[1],
+        "espacio_boton": column_icon.controls[1]
+    }
+    
     return fila
 
 def calcular_precio_total():
     precios_recolectados=[]
     for fila in lista_reparaciones.controls[:]:
-        precio=fila.controls[1]
+        precio=fila.data["precio"]
         try:
-            precio.error=None
             if precio.value != "":
                 precios_recolectados.append(float(precio.value))
         except:
@@ -282,7 +337,7 @@ def calcular_precio_total():
 
 def actualizar_boton_repuestos():
     for fila in lista_repuestos.controls:
-        boton=fila.controls[3]
+        boton=fila.controls[3].controls[0]
         boton.icon=ft.Icons.DELETE
         boton.bgcolor={
         ft.ControlState.DEFAULT: ft.Colors.RED,
@@ -290,14 +345,14 @@ def actualizar_boton_repuestos():
     }
     if lista_repuestos.controls:
             ultima = lista_repuestos.controls[-1]
-            ultima.controls[3].icon = ft.Icons.ADD
-            ultima.controls[3].bgcolor={
+            ultima.controls[3].controls[0].icon = ft.Icons.ADD
+            ultima.controls[3].controls[0].bgcolor={
         ft.ControlState.DEFAULT: ft.Colors.GREEN_400,
         ft.ControlState.DISABLED: ft.Colors.GREY_400
     }
 
 def crear_campo_repuestos():
-
+    
     repuesto=ft.Dropdown(
         width=196,
         editable=True,
@@ -311,11 +366,7 @@ def crear_campo_repuestos():
             weight=ft.FontWeight.W_500,
             font_family="Roboto-Medium"
         ),
-        options=[
-            ft.dropdown.Option(
-                text=f" {p["CEDULA"]} - {p['NOMBRES']} ", style=ft.TextStyle(color="black")
-            ) for p in ctr_per.obtener_datos_personal().values()#mostrar repuestos registrados
-        ]
+        capitalization=ft.TextCapitalization.WORDS
     )
     marca_repuesto=ft.Dropdown(
         width=196,
@@ -330,11 +381,8 @@ def crear_campo_repuestos():
             weight=ft.FontWeight.W_500,
             font_family="Roboto-Medium"
         ),
-        options=[
-            ft.dropdown.Option(
-                text=f" {p["CEDULA"]} - {p['NOMBRES']} ", style=ft.TextStyle(color="black")
-            ) for p in ctr_per.obtener_datos_personal().values()#mostrar marcas de repuestos regisrados registrados
-        ]
+        
+        capitalization=ft.TextCapitalization.WORDS
     )
     proveedor_repuesto=ft.Dropdown(
         width=196,
@@ -349,11 +397,7 @@ def crear_campo_repuestos():
             weight=ft.FontWeight.W_500,
             font_family="Roboto-Medium"
         ),
-        options=[
-            ft.dropdown.Option(
-                text=f" {p["CEDULA"]} - {p['NOMBRES']} ", style=ft.TextStyle(color="black")
-            ) for p in ctr_per.obtener_datos_personal().values()#mostrar almacenes registrados
-        ]
+        capitalization=ft.TextCapitalization.WORDS
     )
     boton_general=ft.IconButton(
         icon=ft.Icons.ADD,
@@ -363,28 +407,58 @@ def crear_campo_repuestos():
             ft.ControlState.DISABLED: ft.Colors.GREY_400
         }
     )
+    def crear_espacio(width, height):
+        return ft.Container(
+            width=width,
+            height=height,
+            bgcolor=ft.Colors.TRANSPARENT,
+            visible=False,
+        )
     
-    stack_repuesto=ft.Stack(
+    stack_repuesto=ft.Column(
         controls=[
-            repuesto,
-            crear_bloqueo_dropdown(196)
+            ft.Stack(
+                controls=[
+                repuesto,
+                crear_bloqueo_dropdown(196)
+                ]
+            ),
+            crear_espacio(196,10)
         ]
     )
-    stack_marca=ft.Stack(
+    stack_marca=ft.Column(
         controls=[
-            marca_repuesto,
-            crear_bloqueo_dropdown(196)
+            ft.Stack(
+                controls=[
+                marca_repuesto,
+                crear_bloqueo_dropdown(196)
+                ]
+            ),
+            crear_espacio(196,10)
         ]
     )
-    stack_proovedor=ft.Stack(
+    stack_proovedor=ft.Column(
         controls=[
-            proveedor_repuesto,
-            crear_bloqueo_dropdown(196)
+            ft.Stack(
+                controls=[
+                proveedor_repuesto,
+                crear_bloqueo_dropdown(196)
+                ]
+            ),
+            crear_espacio(196,10)
+        ]
+    )
+    column_icon=ft.Column(
+        spacing=9,
+        controls=[
+            boton_general,
+            crear_espacio(40,10)
         ]
     )
     def acccion_boton(e):
         if boton_general.icon== ft.Icons.ADD:
             lista_repuestos.controls.append(crear_campo_repuestos())
+            vehiculos_view.cargar_catalogos()
         else:
             if len(lista_repuestos.controls) > 1:
                 lista_repuestos.controls.remove(fila)
@@ -397,10 +471,24 @@ def crear_campo_repuestos():
             stack_repuesto,
             stack_marca,
             stack_proovedor,
-            boton_general
+            column_icon
         ]
     )
+    fila.data = {
+    "repuesto": repuesto,
+    "marca": marca_repuesto,
+    "proveedor": proveedor_repuesto,
+    "boton": boton_general,
     
+    "bloqueo_repuesto": stack_repuesto.controls[0].controls[1],
+    "bloqueo_marca": stack_marca.controls[0].controls[1],
+    "bloqueo_proveedor": stack_proovedor.controls[0].controls[1],
+    
+    "espacio_repuesto": stack_repuesto.controls[1],
+    "espacio_marca": stack_marca.controls[1],
+    "espacio_proveedor": stack_proovedor.controls[1],
+    "espacio_boton": column_icon.controls[1]
+    }   
     return fila 
 
 text_reparaciones=Text("Reparaciones Realizadas", 20, ft.Colors.BLACK, "w400")
@@ -541,7 +629,7 @@ formulario_reparaciones=ft.Column(
                 ft.Column(
                     controls=[
                         text_personal_encargado,
-                        stack_personal_encargaado
+                        stack_personal_encargado
                     ]
                 ),
                 ft.VerticalDivider(),

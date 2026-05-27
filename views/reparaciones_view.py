@@ -1049,6 +1049,12 @@ def detalles_reparaciones(e,orden):
 
         for img in orden["RUTAS_IMAGENES"]:
 
+            ruta = img["RUTA_IMAGEN"]
+
+            # Verificar si existe la imagen
+            if not ruta or not os.path.exists(ruta):
+                continue
+
             item = ft.Container(
                 width=180,
                 height=180,
@@ -1057,13 +1063,15 @@ def detalles_reparaciones(e,orden):
                 clip_behavior=ft.ClipBehavior.HARD_EDGE,
 
                 content=ft.Image(
-                    src=img["RUTA_IMAGEN"]
+                    src=ruta,
+                    fit=ft.ImageFit.COVER
                 )
             )
 
             lista.controls.append(item)
 
-        if not orden["RUTAS_IMAGENES"]:
+        # Si no hay imágenes válidas
+        if len(lista.controls) == 0:
             return ft.Column()
 
         else:

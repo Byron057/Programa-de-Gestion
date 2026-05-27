@@ -55,30 +55,30 @@ def validar_campos_repuestos():
         if not repuesto.text and not marca.text and not proovedor.text and len(reparaciones_view.lista_repuestos.controls)>1:
             reparaciones_view.lista_repuestos.controls.remove(fila)
             reparaciones_view.actualizar_boton_repuestos()
-            
+        if  repuesto.text or marca.text or proovedor.text or len(reparaciones_view.lista_repuestos.controls)>1:    
 
-        if not repuesto.text:
-            repuesto.error_text="Campo Obligatorio"
-            validacion=False
-        else:
-            fila.data["espacio_repuesto"].visible=True
-            fila.data["espacio_boton"].visible=True
-            repuesto.error_text=None
-            
-        if not marca.text:
-            marca.error_text="Campo Obligatorio"
-            validacion=False
-        else:
-            fila.data["espacio_marca"].visible=True
-            fila.data["espacio_boton"].visible=True
-            marca.error_text=None
-        if not proovedor.text:
-            proovedor.error_text="Campo Obligatorio"
-            validacion=False
-        else:
-            fila.data["espacio_proveedor"].visible=True
-            fila.data["espacio_boton"].visible=True
-            proovedor.error_text= None
+            if not repuesto.text:
+                repuesto.error_text="Campo Obligatorio"
+                validacion=False
+            else:
+                fila.data["espacio_repuesto"].visible=True
+                fila.data["espacio_boton"].visible=True
+                repuesto.error_text=None
+                
+            if not marca.text:
+                marca.error_text="Campo Obligatorio"
+                validacion=False
+            else:
+                fila.data["espacio_marca"].visible=True
+                fila.data["espacio_boton"].visible=True
+                marca.error_text=None
+            if not proovedor.text:
+                proovedor.error_text="Campo Obligatorio"
+                validacion=False
+            else:
+                fila.data["espacio_proveedor"].visible=True
+                fila.data["espacio_boton"].visible=True
+                proovedor.error_text= None
         
         if not marca.error_text and not repuesto.error_text and not proovedor.error_text:
             fila.data["espacio_repuesto"].visible=False
@@ -91,12 +91,16 @@ def validar_campos_repuestos():
 
 def guardar_campos_repuestos():
     for fila in reparaciones_view.lista_repuestos.controls[:]:
-        repuesto=fila.data["repuesto"].text.title()
-        marca=fila.data["marca"].text.title()
-        proovedor=fila.data["proveedor"].text.title()
+        if not fila.data["repuesto"].text and not fila.data["marca"].text and not fila.data["proveedor"].text:
+            continue
+        else:
+            repuesto=fila.data["repuesto"].text.title()
+            marca=fila.data["marca"].text.title()
+            proveedor=fila.data["proveedor"].text.title()
         
-        id_repuesto=catalogos_vehiculos_db.guardar_repuesto(repuesto)
-        id_marca=catalogos_vehiculos_db.guardar_marca_repuesto(marca)
-        id_proveedor=catalogos_vehiculos_db.guardar_proovedor_repuesto(proovedor)
-        
-    return id_repuesto, id_marca, id_proveedor
+            id_repuesto=catalogos_vehiculos_db.guardar_repuesto(repuesto)
+            id_marca=catalogos_vehiculos_db.guardar_marca_repuesto(marca)
+            id_proveedor=catalogos_vehiculos_db.guardar_proveedor_repuesto(proveedor)
+                
+            return id_repuesto, id_marca, id_proveedor
+    return None

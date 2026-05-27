@@ -45,5 +45,14 @@ def guardar_orden_reparacion(
     except sqlite3.Error as e:
         print(e)
         conn.close()
-    
         
+def guardar_rutas_imagenes_veh(id_orden_reparacion, ruta):
+    try:
+        conn=db_core.conectBaseDeDatos()
+        query=conn.cursor()
+        query.execute("INSERT INTO IMAGENES_VEHICULOS VALUES(NULL,?,?)", (id_orden_reparacion, ruta,))
+        conn.commit()
+        conn.close()
+    except sqlite3.Error as e:
+        print(e)
+        conn.close()        

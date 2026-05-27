@@ -2,6 +2,9 @@ import flet as ft
 import re
 from database import personal_db, db_core
 from components import *
+def total_personal():
+    total_personal=personal_db.contar_personal_activos()
+    return total_personal
 
 def limpiar_formulario():
     from views import personal_view

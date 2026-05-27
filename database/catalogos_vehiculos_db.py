@@ -137,7 +137,7 @@ def guardar_marca_repuesto(marca_repuesto):
         conn.close()
     return query.lastrowid
         
-def guardar_proovedor_repuesto(proveedor_repuesto):
+def guardar_proveedor_repuesto(proveedor_repuesto):
     try:
         conn=db_core.conectBaseDeDatos()
         query=conn.cursor()

@@ -5,6 +5,9 @@ from database import vehiculos_db, catalogos_vehiculos_db, clientes_db
 from controls import controls_catalogos_vehiculos
 from controls import controls_reparaciones as ctr_rep
 from components import *
+def total_vehiculos():
+    total_vehiculos=vehiculos_db.contar_vehiculos_activos()
+    return total_vehiculos
 
 def limpiar_formulario():
     vehiculos_view.marca_vehiculo.text=""
@@ -153,7 +156,8 @@ def obtener_datos_vehiculos():
                 "YEAR": v[5],
                 "TIPO": v[6],
                 "COLOR": v[7],
-                "PROPIETARIO": []
+                "PROPIETARIO": [],
+                "ORDEN_REPARACION": []
             }
         if v[8]:
             propietario={
@@ -164,6 +168,66 @@ def obtener_datos_vehiculos():
             }
             if not any(c["CEDULA"] == v[8] for c in vehiculos[id_vehiculo]["PROPIETARIO"]):
                 vehiculos[id_vehiculo]["PROPIETARIO"].append(propietario)
+        if v[12]:
+            orden_reparacion={
+                "id_orden_reparacion": v[12],
+                "FECHA_INGRESO": v[13],
+                "FECHA_SALIDA": v[14],
+                "PRECIO_TOTAL": v[16],
+                "KILOMETRAJE_ACTUAL": v[17],
+                "PROXIMO_KILOMETRAJE": v[18],
+                "PERSONAL_ENCARGADO": {
+                        "NOMBRES": v[19],
+                        "APELLIDOS": v[20],
+                        "CEDULA": v[21]
+                },
+                "REPARACIONES_REALIZADAS": [],
+                "REPUESTOS_UTILIZADOS": [],
+                "RUTAS_IMAGENES": [],
+                
+            }
+            if not any(o["id_orden_reparacion"]==v[12] for o in vehiculos[id_vehiculo]["ORDEN_REPARACION"]):
+                vehiculos[id_vehiculo]["ORDEN_REPARACION"].append(orden_reparacion)
+            for orden in vehiculos[id_vehiculo]["ORDEN_REPARACION"]:
+                if orden["id_orden_reparacion"] == v[12]:
+                    # agregar reparaciones a ESA orden
+                    if v[22]:
+                        reparaciones_realizadas={
+                            "id_reparacion": v[22],
+                            "REPARACION": v[23],
+                            "PRECIO": v[24]
+                        }
+                        if not any(
+                            rr["id_reparacion"] == v[22]
+                            for rr in orden["REPARACIONES_REALIZADAS"]
+                        ):
+                            orden["REPARACIONES_REALIZADAS"].append(reparaciones_realizadas)
+            for rep_uti in vehiculos[id_vehiculo]["ORDEN_REPARACION"]:
+                if rep_uti["id_orden_reparacion"]==v[12]:
+                    if v[25]:
+                        repuestos_utilizados={
+                            "id_rep_uti": v[25],
+                            "REPUESTO": v[26],
+                            "MARCA_REPUESTO": v[27],
+                            "PROVEEDOR": v[28]
+                        }
+                        if not any(
+                            ru["id_rep_uti"] == v[25]
+                            for ru in rep_uti["REPUESTOS_UTILIZADOS"]
+                        ):
+                            rep_uti["REPUESTOS_UTILIZADOS"].append(repuestos_utilizados)
+            for ruta in vehiculos[id_vehiculo]["ORDEN_REPARACION"]:
+                if ruta["id_orden_reparacion"]==v[12]:
+                    if v[29]:
+                        rutas_imagenes={
+                            "id_imagen": v[29],
+                            "RUTA_IMAGEN": v[30]
+                        }
+                        if not any(
+                            iv["id_imagen"] == v[29]
+                            for iv in rep_uti["RUTAS_IMAGENES"]
+                        ):
+                            ruta["RUTAS_IMAGENES"].append(rutas_imagenes)
     return vehiculos
 
 def guardar_datos_vehiculos(e, cerrar_dialog=False):
@@ -218,6 +282,7 @@ def editar_datos_vehiculo():
     resultado=vehiculos_db.editar_datos_vehiculo(id_cliente, id_marca, id_modelo, placa, year, id_tipo, id_color,id_vehiculo)
     
     return resultado
+
 def guardar_datos_editados(e):
     validacion=validacion_general()
     if validacion==True:
@@ -232,3 +297,7 @@ def guardar_datos_editados(e):
             )
         else:
             e.page.run_task(alerta_error,e,"Verifique si los datos ya estan en el sistema")
+
+def eliminar_datos_vehiculo(id_actual):
+   vehiculos_db.eliminar_vehiculo(id_actual)
+   vehiculos_view.cambiar_vista(vehiculos_view.listado_vehiculos())

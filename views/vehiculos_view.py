@@ -47,7 +47,7 @@ def cargar_catalogos():
     
     reparaciones_view.personal_encargado.options=[
         ft.dropdown.Option(
-            text=f" {p["CEDULA"]} - {p['NOMBRES']} ", style=ft.TextStyle(color="black")
+            key=p["id_personal"], text=f" {p["CEDULA"]} - {p['NOMBRES']} ", style=ft.TextStyle(color="black")
         ) for p in ctr_per.obtener_datos_personal().values()
     ]
     repuestos = ctr_cat_veh.mostrar_repuestos()
@@ -409,10 +409,17 @@ def tabla_vehiculos_registrados():
     lista_resultados=ft.Column(expand=True, scroll=ft.ScrollMode.AUTO)
     
     def actualizar_lista(e=None):
-        busqueda=barra_busqueda.value.lower().strip()
+        busqueda=barra_busqueda.value.strip().lower()
         lista_resultados.controls.clear()
         for vehiculo in datos.values():
-            if busqueda == "":
+            if (
+                busqueda.lower() in vehiculo["PLACA"].lower()
+                or busqueda.lower() in vehiculo["TIPO"].lower()
+                or any(
+                    busqueda.lower() in propietario["CEDULA"].lower()
+                    for propietario in vehiculo["PROPIETARIO"]
+                )
+            ):
                 nueva_tarjeta=crear_tarjeta(vehiculo)
                 lista_resultados.controls.append(nueva_tarjeta)
                 
@@ -460,7 +467,6 @@ def detalles_vehiculos(item):
     #agregaraui el historial de reparaciones, una tarjeta por cada reparacion en la que me va a salir la info
     #agregar una busuqeda por fecha
     
-    global id_actual_veh
     id_actual_veh=item["id_vehiculo"]
     boton_editar=ft.Button(
         content=Text("Editar", 20, ft.Colors.WHITE),
@@ -470,7 +476,7 @@ def detalles_vehiculos(item):
     boton_eliminar=ft.Button(
         content=Text("Eliminar", 20, ft.Colors.WHITE),
         bgcolor=ft.Colors.RED_700,
-        on_click=lambda e: print("Vehiculos_view_boton_eliminar")
+        on_click=lambda e: ctr_veh.eliminar_datos_vehiculo(id_actual_veh)
     )
     imagen = ft.Container(
         width=150,
@@ -628,6 +634,7 @@ def detalles_vehiculos(item):
                                                 boton_eliminar
                                             ]
                                         ),
+                                        reparaciones_view.hitorial_reparaciones(item)
                                     ]
                                 )
                             )

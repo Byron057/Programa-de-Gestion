@@ -242,6 +242,16 @@ def data_necesaria(db_path='gestion_mecanica.db'):
             )
         """            
         )
+        query.execute("""
+                    CREATE TABLE IF NOT EXISTS IMAGENES_VEHICULOS(
+                        id_imagen_vehiculo INTEGER PRIMARY KEY AUTOINCREMENT,
+                        id_orden_reparacion INTEGER,
+                        RUTA_IMAGEN TEXT,
+                        
+                        FOREIGN KEY (id_orden_reparacion) REFERENCES ORDEN_REPARACION (id_orden_reparacion)
+                    )
+                      
+        """)
         
         
         conn.commit()

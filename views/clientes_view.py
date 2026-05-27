@@ -365,7 +365,7 @@ def tabla_clientes_registrados():
 
     
 def detalles_clientes(item):
-    global id_actual
+    
     id_actual=item["id_cliente"]
     boton_editar=ft.Button(
         content=Text("Editar", 20, ft.Colors.WHITE),
@@ -375,7 +375,7 @@ def detalles_clientes(item):
     boton_eliminar=ft.Button(
         content=Text("Eliminar", 20, ft.Colors.WHITE),
         bgcolor=ft.Colors.RED_700,
-        on_click=lambda e: ctr_cln.eliminar_datos_cliente()
+        on_click=lambda e: ctr_cln.eliminar_datos_cliente(id_actual)
     )
     imagen = ft.Container(
         width=150,
@@ -385,11 +385,11 @@ def detalles_clientes(item):
         content=ft.Icon(ft.Icons.PERSON, size=150, color=ft.Colors.GREY_400)
     )
     
-    def crear_tarjeta(item):
-        placa=item["VEHICULOS"][0]["PLACA"]
-        tipo=item["VEHICULOS"][0]["TIPO"]
-        marca=item["VEHICULOS"][0]["MARCA"]
-        modelo=item["VEHICULOS"][0]["MODELO"]
+    def crear_tarjeta_vevhiculo(vehiculo):
+        placa=vehiculo["PLACA"]
+        tipo=vehiculo["TIPO"]
+        marca=vehiculo["MARCA"]
+        modelo=vehiculo["MODELO"]
         return ft.Card(
             elevation=5,
             shadow_color=ft.Colors.WHITE,
@@ -424,8 +424,8 @@ def detalles_clientes(item):
             color=ft.Colors.GREY_400
         )
         if item["VEHICULOS"]:
-            for v in item["VEHICULOS"]:
-                vehiculo_registrado=crear_tarjeta(item)
+            for vehiculo in item["VEHICULOS"]:
+                vehiculo_registrado=crear_tarjeta_vevhiculo(vehiculo)
                 vehiculos.controls.append(vehiculo_registrado)
         else:
             vehiculos.controls.append(sin_vehiculo)  

@@ -77,9 +77,7 @@ def cambiar_color_reparaciones(color_boton, disabled_boton, color_textfield, dis
         precio.read_only= disabled_textfield
         precio.suffix=Text("$", 20, color_textfield)
         
-
-def interfaz_checkbox_vehiculos():
-    #restablece algunos campos funciona de la misma manera que la funcion de limpiar campos
+def limpiar_campos_reparacion():
     reparaciones_view.fecha_entrada.value=reparaciones_view.fecha_actual
     reparaciones_view.fecha_entrega.value=reparaciones_view.fecha_actual
     reparaciones_view.kilometraje_actual.value=None
@@ -90,10 +88,14 @@ def interfaz_checkbox_vehiculos():
     reparaciones_view.lista_imagenes.controls.clear()
     reparaciones_view.imagenes_seleccionadas.clear()
     reparaciones_view.nuevas_rutas_imagenes.clear()
-    
     limpiar_lista_reparaciones()
     limpiar_lista_repuestos()
-   
+    
+def interfaz_checkbox_vehiculos():
+    #restablece algunos campos funciona de la misma manera que la funcion de limpiar campos
+    limpiar_campos_reparacion()
+    reparaciones_view.seleccionar_imagen.bgcolor=ft.Colors.GREY_200
+    
     if reparaciones_view.vehiculos_view.checkbox_agregar_reparacion.value==True:
         #cambiar a la carpeta controls
         reparaciones_view.text_fecha_entrada.color=ft.Colors.BLACK
@@ -281,6 +283,7 @@ def guardar_campos_orden_reparacion(id_vehiculo):
         precio_total, kilometraje_actual, proximo_kilometraje
     )
     return id_orden_rep
+
 def guardar_repuestos_utilizados(id_orden_rep, id_repuesto, id_marca, id_proveedor):
     for fila in reparaciones_view.lista_reparaciones.controls[:]:
         reparaciones_db.guardar_repuestos_utilizados(id_orden_rep, id_repuesto, id_marca, id_proveedor)
@@ -291,3 +294,33 @@ def guardar_reparaciones(id_vehiculo):
         id_repuesto, id_marca, id_proveedor=ctr_cat_veh.guardar_campos_repuestos()
         guardar_repuestos_utilizados(id_orden_rep, id_repuesto, id_marca, id_proveedor)
         guardar_campos_reparaciones(id_orden_rep)
+def guardar_imagenes(id_orden_reparacion):
+    reparaciones_view.guardar_imagenes_vehiculos()
+    for ruta in reparaciones_view.nuevas_rutas_imagenes:
+        print(ruta)
+        reparaciones_db.guardar_rutas_imagenes_veh(id_orden_reparacion, ruta)
+
+def guardar_nueva_orden(e,id_vehiculo):
+    guardado=False
+    validacion= validacion_general()  
+    if validacion == True:
+        id_orden_rep=guardar_campos_orden_reparacion(id_vehiculo)
+        resultado=ctr_cat_veh.guardar_campos_repuestos()
+        if resultado:
+            id_repuesto, id_marca, id_proveedor = resultado
+
+            guardar_repuestos_utilizados(
+                id_orden_rep,
+                id_repuesto,
+                id_marca,
+                id_proveedor
+            )
+        guardar_campos_reparaciones(id_orden_rep)
+        guardar_imagenes(id_orden_rep)
+        guardado= True
+        if guardado==True:
+            e.page.run_task(save_alert,e.page)
+            limpiar_campos_reparacion()
+            e.page.pop_dialog()
+        else:
+            e.page.run_task(alerta_error,e.page,"Verifique si los datos ya estan en el sistema")

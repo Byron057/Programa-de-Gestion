@@ -64,3 +64,10 @@ def eliminar_datos_personal(id):
     except sqlite3.Error as error:
         conn.close()
         print(error)
+def contar_personal_activos():
+    conn= db_core.conectBaseDeDatos()
+    query=conn.cursor()
+    query.execute('SELECT COUNT(*) FROM PERSONAL WHERE ESTADO="activo"')
+    total = query.fetchone()[0]
+    conn.close()
+    return total

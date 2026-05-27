@@ -250,7 +250,6 @@ def guardar_datos_modificados(e):
         else:
             e.page.run_task(alerta_error, e,"Verifique si la cedula ya existe en el sistema")
 
-def eliminar_datos_cliente():
-   id=clientes_view.id_actual
-   clientes_db.eliminar_clientes(id)
+def eliminar_datos_cliente(id_actual):
+   clientes_db.eliminar_clientes(id_actual)
    clientes_view.cambiar_vista(clientes_view.listado_clientes())

@@ -3,6 +3,7 @@ from components import *
 import datetime as dt
 from views import vehiculos_view
 import controls.controls_personal as ctr_per
+import controls.controls_reparaciones as ctr_rep
 import database.reparaciones_db as rep_db
 import shutil, os
 
@@ -98,7 +99,6 @@ personal_encargado= ft.Dropdown(
     hint_text="Seleccione el Personal Encargado",
     border_color=ft.Colors.BLACK,
     color=ft.Colors.BLACK,
-    text="",
     bgcolor=ft.Colors.WHITE,
     error_style=ft.TextStyle(
         color=ft.Colors.RED_ACCENT_700,
@@ -509,7 +509,6 @@ def construir_galeria(ruta):
     def eliminar_foto(foto_eliminar):
         lista_imagenes.controls.remove(foto_eliminar)
         imagenes_seleccionadas.remove(foto_eliminar.data)
-        print(imagenes_seleccionadas)
     
     tarjeta=ft.Container(
         width=100,
@@ -544,7 +543,6 @@ async def pick_files(e):
         for i in lista_imagenes_seleccionadas:
             if not i.path in imagenes_seleccionadas:
                 imagenes_seleccionadas.append(i.path)
-                print(imagenes_seleccionadas)
                 construir_galeria(i.path)
             lista_imagenes.update()
 
@@ -565,8 +563,10 @@ galeria_imagenes=ft.Container(
     border=ft.border.all(1, ft.Colors.BLACK),
     border_radius=30,
     padding=ft.padding.only(left=20,right=20,top=10, bottom=10),
+    clip_behavior=ft.ClipBehavior.HARD_EDGE,
     content=(
         ft.Row(
+            scroll=ft.ScrollMode.AUTO,
             controls=[
                 lista_imagenes,
                 seleccionar_imagen
@@ -586,7 +586,6 @@ def guardar_imagenes_vehiculos():
                 nuevas_rutas_imagenes.append(nueva_ruta)
         except:
             pass
-        print(nuevas_rutas_imagenes)
 
 formulario_reparaciones=ft.Column(
     #aqui se agregan los campos necesarios para poder registrar nuevas reparaciones, 
@@ -700,3 +699,525 @@ formulario_reparaciones=ft.Column(
     ]
     
 )
+
+def registrar_nueva_orden(e, id_vehiculo):
+    seleccionar_imagen.bgcolor=ft.Colors.WHITE
+    boton_cancelar= ft.Button(
+        content=Text("Cancelar",20, ft.Colors.BLACK),
+        bgcolor=ft.Colors.GREY_300,
+        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=1)),
+        on_click=lambda e: [e.page.pop_dialog(),ctr_rep.limpiar_campos_reparacion()]
+    )
+    boton_guardar=ft.Button(
+        content=Text("Guardar", 20, ft.Colors.WHITE),
+        disabled=False,
+        style=ft.ButtonStyle(
+            bgcolor={
+                ft.ControlState.DISABLED: ft.Colors.GREY_400, 
+                ft.ControlState.DEFAULT: ft.Colors.BLUE_700   
+            },
+            color={
+                ft.ControlState.DISABLED: ft.Colors.GREY_600, 
+                ft.ControlState.DEFAULT: ft.Colors.WHITE      
+            },
+            shape=ft.RoundedRectangleBorder(radius=1)
+        ),
+        on_click= lambda e: ctr_rep.guardar_nueva_orden(e,id_vehiculo)
+    )
+    formulario_global=e.page.show_dialog(
+        ft.AlertDialog(
+            modal=True,
+            open=True,
+            bgcolor=ft.Colors.WHITE,
+            content= ft.Column(
+                width=720,
+                height=540,
+                scroll=ft.ScrollMode.AUTO,
+                controls= [
+                    ft.Row(
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        controls=[
+                            ft.Text(
+                            "Nueva Reparacion",
+                            size=30,
+                            weight="w500",
+                            color=ft.Colors.BLACK
+                            )
+                        ]
+                    ),
+                    formulario_reparaciones,
+                    ft.Divider(color=ft.Colors.TRANSPARENT),
+                    ft.Container(
+                        content=ft.Row(
+                            alignment=ft.MainAxisAlignment.END,
+                            controls=[
+                                boton_cancelar,
+                                boton_guardar
+                            ]
+                        )
+                    )  
+                ]
+            )
+        )
+    )
+    return formulario_global
+
+def detalles_reparaciones(e,orden):
+    
+    def campo(icono, titulo, valor):
+        return ft.Container(
+            expand=True,
+            padding=12,
+            border_radius=12,
+            bgcolor=ft.Colors.GREY_100,
+            border=ft.border.all(1, ft.Colors.GREY_300),
+            content=ft.Row(
+                spacing=12,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    ft.Container(
+                        width=35,
+                        height=35,
+                        border_radius=8,
+                        bgcolor=ft.Colors.BLUE_100,
+                        alignment=ft.Alignment.CENTER,
+                        content=ft.Icon(icono, size=18, color=ft.Colors.BLUE_700)
+                    ),
+                    ft.Column(
+                        spacing=2,
+                        expand=True,
+                        controls=[
+                            Text(titulo, 12, ft.Colors.BLACK),
+                            Text(valor, 16, ft.Colors.GREY_600 ,"bold")
+                        ]
+                    )
+                ]
+            )
+        )
+    
+    datos = ft.Column(
+        spacing=12,
+        controls=[
+            ft.Row(
+                spacing=12,
+                controls=[
+                    campo(ft.Icons.CALENDAR_MONTH, "Fecha Ingreso", orden["FECHA_INGRESO"]),
+                    campo(ft.Icons.EVENT, "Fecha Entrega", orden["FECHA_SALIDA"])
+                ]
+            ),
+            ft.Row(
+                spacing=12,
+                controls=[
+                    campo(ft.Icons.PERSON, "Personal Encargado", orden["PERSONAL_ENCARGADO"]["NOMBRES"]),
+                    campo(ft.Icons.ATTACH_MONEY, "Precio Total", f"${orden['PRECIO_TOTAL']}")
+                ]
+            ),
+            ft.Row(
+                spacing=12,
+                controls=[
+                    campo(ft.Icons.STRAIGHTEN, "Kilometraje Actual", f"{orden['KILOMETRAJE_ACTUAL']} km"),
+                    campo(ft.Icons.ROUTE, "Siguiente KM", f"{orden['PROXIMO_KILOMETRAJE']} km")
+                ]
+            )
+        ]
+    )
+    
+    def lista_reparaciones_realizadas(orden):
+
+        lista = ft.Column(
+            spacing=8
+        )
+
+        for rr in orden["REPARACIONES_REALIZADAS"]:
+            item=ft.Row(
+            spacing=12,
+            expand=True,
+            controls=[
+                ft.Container(
+                    padding=10,
+                    border_radius=8,
+                    width=600,
+                    bgcolor=ft.Colors.GREY_100,
+                    border=ft.border.all(1, ft.Colors.GREY_300),
+
+                    content=ft.Row(
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,  # ← centrar ícono
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        controls=[
+                            ft.Row(
+                                expand=True,
+                                vertical_alignment=ft.CrossAxisAlignment.CENTER,  
+                                alignment=ft.MainAxisAlignment.START,
+                                spacing=10,
+                                controls=[
+                                    ft.Icon(
+                                        ft.Icons.BUILD,
+                                        color=ft.Colors.BLUE_700
+                                    ),
+                                    ft.Text(
+                                        rr["REPARACION"],
+                                        color=ft.Colors.BLACK,
+                                        size=16,
+                                        expand=True
+                                    )
+                                ]
+                            ),
+                        ]
+                    )
+                ),
+                ft.Container(
+                    padding=10,
+                    border_radius=8,
+                    bgcolor=ft.Colors.GREY_100,
+                    border=ft.border.all(1, ft.Colors.GREY_300),
+                    width=107,
+
+                    content=ft.Row(
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,  
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        expand=True,
+                        controls=[
+                            ft.Text(
+                                f"${rr['PRECIO']}",
+                                weight=ft.FontWeight.W_500,
+                                color=ft.Colors.BLACK,
+                                expand=True
+                            )
+                        ]
+                    )
+                )
+            ]
+        )
+            lista.controls.append(item)
+
+        return ft.Column(
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.Text(
+                    "Reparaciones Realizadas",
+                    size=20,
+                    weight="w500",
+                    color=ft.Colors.BLACK
+                ),
+                ft.Row(
+                    controls=[
+                        ft.Text(
+                            "Reparacion",
+                            size=20,
+                            color=ft.Colors.BLACK
+                        ),
+                        ft.Container(width=492),
+                        ft.Text(
+                            "Precio",
+                            size=20,
+                            color=ft.Colors.BLACK
+                        )
+                    ]
+                ),
+                lista
+            ]
+        )
+    def lista_repuestos_utilizados(orden):
+        lista = ft.Column(
+            spacing=8
+        )
+
+        for rr in orden["REPUESTOS_UTILIZADOS"]:
+            item=ft.Row(
+            spacing=12,
+            expand=True,
+            controls=[
+                ft.Container(
+                    padding=10,
+                    border_radius=8,
+                    width=232,
+                    bgcolor=ft.Colors.GREY_100,
+                    border=ft.border.all(1, ft.Colors.GREY_300),
+
+                    content=ft.Row(
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,  # ← centrar ícono
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        controls=[
+                            ft.Row(
+                                expand=True,
+                                vertical_alignment=ft.CrossAxisAlignment.CENTER,  
+                                alignment=ft.MainAxisAlignment.START,
+                                spacing=10,
+                                controls=[
+                                    ft.Text(
+                                        rr["REPUESTO"],
+                                        color=ft.Colors.BLACK,
+                                        size=16,
+                                        expand=True
+                                    )
+                                ]
+                            ),
+                        ]
+                    )
+                ),
+                ft.Container(
+                    padding=10,
+                    border_radius=8,
+                    bgcolor=ft.Colors.GREY_100,
+                    border=ft.border.all(1, ft.Colors.GREY_300),
+                    width=232,
+
+                    content=ft.Row(
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,  
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        expand=True,
+                        controls=[
+                            ft.Text(
+                                f"{rr['MARCA_REPUESTO']}",
+                                weight=ft.FontWeight.W_500,
+                                color=ft.Colors.BLACK,
+                                expand=True
+                            )
+                        ]
+                    )
+                ),
+                ft.Container(
+                    padding=10,
+                    border_radius=8,
+                    bgcolor=ft.Colors.GREY_100,
+                    border=ft.border.all(1, ft.Colors.GREY_300),
+                    width=232,
+
+                    content=ft.Row(
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,  
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        expand=True,
+                        controls=[
+                            ft.Text(
+                                f"{rr['PROVEEDOR']}",
+                                weight=ft.FontWeight.W_500,
+                                color=ft.Colors.BLACK,
+                                expand=True
+                            )
+                        ]
+                    )
+                )
+            ]
+        )
+            lista.controls.append(item)
+        if not orden["REPUESTOS_UTILIZADOS"]:
+            return ft.Column()
+        else:
+            return ft.Column(
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    ft.Text(
+                        "Repuestos Utilizados",
+                        size=20,
+                        weight="w500",
+                        color=ft.Colors.BLACK
+                    ),
+                    ft.Row(
+                        controls=[
+                            ft.Text(
+                                "Repuesto",
+                                size=20,
+                                color=ft.Colors.BLACK
+                            ),
+                            ft.Container(width=140),
+                            ft.Text(
+                                "Marca",
+                                size=20,
+                                color=ft.Colors.BLACK
+                            ),
+                            ft.Container(width=170),
+                            ft.Text(
+                                "Proveedor",
+                                size=20,
+                                color=ft.Colors.BLACK
+                            )
+                        ]
+                    ),
+                    lista
+                ]
+            )
+    def lista_imagenes(orden):
+
+        lista = ft.GridView(
+            expand=False,
+            runs_count=3,
+            max_extent=180,
+            child_aspect_ratio=1.0,
+            spacing=12,
+            run_spacing=12
+        )
+
+        for img in orden["RUTAS_IMAGENES"]:
+
+            item = ft.Container(
+                width=180,
+                height=180,
+                border_radius=10,
+                border=ft.border.all(1, ft.Colors.GREY_300),
+                clip_behavior=ft.ClipBehavior.HARD_EDGE,
+
+                content=ft.Image(
+                    src=img["RUTA_IMAGEN"]
+                )
+            )
+
+            lista.controls.append(item)
+
+        if not orden["RUTAS_IMAGENES"]:
+            return ft.Column()
+
+        else:
+            return ft.Column(
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    ft.Text(
+                        "Imagenes de la Reparacion",
+                        size=20,
+                        weight="w500",
+                        color=ft.Colors.BLACK
+                    ),
+                    lista
+                ]
+            )
+    return e.page.show_dialog(
+        ft.AlertDialog(
+            modal=True,
+            open=True,
+            bgcolor=ft.Colors.WHITE,
+            content= ft.Column(
+                width=720,
+                expand=True,
+                controls= [
+                    ft.Row(
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        controls=[
+                            ft.Text(
+                                "Detalles de la Orden de  Reparacion",
+                                size=25,
+                                weight="w500",
+                                color=ft.Colors.BLACK
+                            ),
+                        ]
+                    ),
+                ft.Container(
+                        expand=True,
+                        content=ft.Column(
+                            scroll=ft.ScrollMode.AUTO,
+                            controls=[
+
+                                ft.Row(
+                                    alignment=ft.MainAxisAlignment.CENTER,
+                                    controls=[
+                                        ft.Container(
+                                            width=150,
+                                            height=160,
+                                            border_radius=10,
+                                            alignment=ft.Alignment.CENTER,
+                                            content=ft.Icon(
+                                                ft.Icons.ASSIGNMENT,
+                                                size=150,
+                                                color=ft.Colors.GREY_400
+                                            )
+                                        )
+                                    ]
+                                ),
+                                datos,
+                                lista_reparaciones_realizadas(orden),
+                                lista_repuestos_utilizados(orden),
+                                lista_imagenes(orden)
+                            ]
+                        )
+                    ),
+                    ft.Row(
+                        alignment=ft.MainAxisAlignment.END,
+                        controls=[
+                            ft.Button(
+                                content=Text("Regresar",20, ft.Colors.BLACK),
+                                bgcolor=ft.Colors.GREY_300,
+                                style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=1)),
+                                on_click=lambda e: [e.page.pop_dialog()]
+                            )
+                        ] 
+                    )
+                ]
+            )
+        )
+    )
+
+def hitorial_reparaciones(item):
+    
+    def crear_tarjeta_orden(orden):
+        fecha_ingreso=orden["FECHA_INGRESO"]
+        precio_total=orden["PRECIO_TOTAL"]
+        kilometraje=orden["KILOMETRAJE_ACTUAL"]
+        nombre_personal=orden["PERSONAL_ENCARGADO"]["NOMBRES"]
+        return ft.Card(
+            elevation=5,
+            shadow_color=ft.Colors.WHITE,
+            content=ft.Container(
+                bgcolor=ft.Colors.GREY_100,
+                padding=3,
+                border=ft.border.all(2, ft.Colors.BLACK),
+                border_radius=10,
+                content=ft.ListTile(
+                    leading=ft.Icon(icon=ft.Icons.BUILD, size=50),
+                    title=ft.Text(
+                    value=f"{fecha_ingreso}",
+                    color=ft.Colors.BLACK,
+                    weight=ft.FontWeight.W_500
+                    ),
+                    subtitle=ft.Text(
+                        value=f" Encargado: {nombre_personal}     Precio: ${precio_total}      Kilometraje: {kilometraje}Km " ,
+                        color=ft.Colors.BLACK,
+                        weight=ft.FontWeight.W_400
+                    ),
+                    bgcolor=ft.Colors.GREY_100,
+                    on_click= lambda e: detalles_reparaciones(e,orden)
+                )
+            )
+        )
+    def historial_reparaciones_registradas(item):
+        lista_historial_reparaciones=ft.Column()
+        sin_historial=ft.Text(
+            "No Existen Ordenes De Reparaciones Registradas",
+            size=20,
+            color=ft.Colors.GREY_400
+        )
+        if item["ORDEN_REPARACION"]:
+            for orden in item["ORDEN_REPARACION"]:
+                orden_reparacion=crear_tarjeta_orden(orden)
+                lista_historial_reparaciones.controls.append(orden_reparacion)
+        else:
+            lista_historial_reparaciones.controls.append(sin_historial)  
+        return ft.Column(
+            expand=True,
+            controls=[
+                lista_historial_reparaciones
+            ]
+        )
+    return ft.Column(
+        expand=True,
+        alignment=ft.MainAxisAlignment.CENTER,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        controls=[
+            ft.Text(
+                "Historial de Reparaciones",
+                size=25,
+                weight="w500",
+                color=ft.Colors.BLACK,
+            ),
+            ft.Divider(),
+            ft.Row(
+                alignment=ft.MainAxisAlignment.END,
+                controls=[
+                    ft.Button(
+                        Text("Agregar Nuevo Reparacion", color=ft.Colors.WHITE),
+                        Icon(ft.Icons.ADD, ft.Colors.WHITE,20),
+                        bgcolor=ft.Colors.BLUE_700,
+                        on_click= lambda e: registrar_nueva_orden(e, item["id_vehiculo"])
+                        )
+                ],
+            ),
+            historial_reparaciones_registradas(item)
+        ]
+    )

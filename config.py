@@ -1,4 +1,6 @@
 import os
+from pathlib import Path
+import sys
 
 RUTA_DATOS = os.path.join(
     os.path.expanduser("~"),
@@ -46,3 +48,12 @@ def inicializar_sistema():
     )
 
     print("Directorios del sistema verificados.")
+
+
+def ruta_recurso(relative_path):
+    if getattr(sys, "frozen", False):
+        base_path = Path(sys.executable).parent
+    else:
+        base_path = Path(__file__).parent
+
+    return str(base_path / relative_path)

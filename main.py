@@ -9,7 +9,7 @@ def main(page:ft.Page):
     page.title="Mecasoft"
     page.window.width = 1400
     page.window.height = 900
-    page.window.icon="MecaSoft.ico"
+    page.window.icon=ruta_recurso("assets/MecaSoft.ico")
 
     page.window.maximized = True
     def route_change():

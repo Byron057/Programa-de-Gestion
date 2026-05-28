@@ -10,6 +10,7 @@ from database import reparaciones_db as rep_db
 from views import reparaciones_view 
 from views import clientes_view
 
+
 #variable que se edita para poder cambbiar entre pantalla sin modificar la barra superior o las notificacioes
 pantalla_vehiculos=ft.Column(expand=True)
 
@@ -21,8 +22,6 @@ def validar_dropdown():
 
 
 def cargar_catalogos():
-    vehiculos_view.marca_vehiculo.value = None
-    vehiculos_view.modelo_vehiculo.value = None
     #carga los datos de todos los dropdown ademas permite actualizar si exite nuevos registros
     marca_vehiculo.options=[
         ft.dropdown.Option(
@@ -112,9 +111,9 @@ marca_vehiculo= ft.Dropdown(
         weight=ft.FontWeight.W_500,
         font_family="Roboto-Medium"
     ),
-    on_text_change=limpiar_key_al_cambiar,
-    #on_select= lambda e: ctr_cat_veh.marca_change(e),
-    #on_blur= lambda e: ctr_cat_veh.marca_change(e)
+    on_text_change=lambda e: [limpiar_key_al_cambiar(e), ctr_cat_veh.marca_change(e)],
+    on_select= lambda e: ctr_cat_veh.marca_change(e),
+    on_blur= lambda e: ctr_cat_veh.marca_change(e)
 
 )
 modelo_vehiculo= ft.Dropdown(
@@ -673,6 +672,7 @@ def editar_veh(e,item):
     #se llena los campos con los atos registrados esto es para poder editar sin tener que llenar todo
     estado_veh.visible=False
     row_chekbox.visible=False 
+    id_veh= item["id_vehiculo"]
     marca_vehiculo.value=item["MARCA"]   
     marca_vehiculo.text=item["MARCA"]
     ctr_cat_veh.marca_change(item["MARCA"])
@@ -684,7 +684,7 @@ def editar_veh(e,item):
     propietario_vehiculo.value=item["id_cliente"]
     form_global_veh(e)
     boton_cancelar.on_click= lambda e: e.page.pop_dialog()
-    boton_guardar.on_click= lambda e: ctr_veh.guardar_datos_editados(e)
+    boton_guardar.on_click= lambda e: ctr_veh.guardar_datos_editados(e, id_veh)
 
 def view_vehiculos(page: ft.Page):
     #retorna al dashboard toda la pantalla principal(lsitado de vehiculos)

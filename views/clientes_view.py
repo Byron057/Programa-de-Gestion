@@ -33,7 +33,7 @@ boton_guardar=ft.Button(
     on_click= lambda e: ctr_cln.guardar_datos_clientes(e)
 )
 nombres_cliente=ft.TextField(
-    hint_text="Ejemplo: Luis Fernando",
+    hint_text="Luis Fernando",
     border_color=ft.Colors.BLACK,
     color=ft.Colors.BLACK,
     capitalization=ft.TextCapitalization.WORDS,
@@ -44,7 +44,7 @@ nombres_cliente=ft.TextField(
     )
 )
 apellidos_cliente=ft.TextField(
-    hint_text="Ejemplo: Pérez Salazar",
+    hint_text="Pérez Salazar",
     border_color=ft.Colors.BLACK,
     color=ft.Colors.BLACK,
     capitalization=ft.TextCapitalization.WORDS,
@@ -55,7 +55,7 @@ apellidos_cliente=ft.TextField(
     )
 )
 cedula_cliente= ft.TextField(
-    hint_text="Ejemplo: 0503456764",
+    hint_text="0503456764",
     border_color=ft.Colors.BLACK,
     color=ft.Colors.BLACK,
     error_style=ft.TextStyle(
@@ -69,7 +69,7 @@ cedula_cliente= ft.TextField(
     
 ) 
 numero_telefono_cliente= ft.TextField(
-    hint_text="Ejmplo: 0998743567",
+    hint_text="0998743567",
     border_color= ft.Colors.BLACK,
     color= ft.Colors.BLACK,
     error_style=ft.TextStyle(
@@ -83,7 +83,7 @@ numero_telefono_cliente= ft.TextField(
 text_correo=Text("Correo Electrónico", 20 , ft.Colors.BLACK, "w400")
 correo_cliente=ft.TextField(
     width=675,
-    hint_text="Ejemplo: automotrizvelastegui@gmail.com",
+    hint_text="correo@gmail.com",
     border_color= ft.Colors.BLACK,
     color=ft.Colors.BLACK,
     error_style=ft.TextStyle(
@@ -121,7 +121,7 @@ ciudades= ft.Dropdown(
 )
 direccion_cliente= ft.TextField(
     width=675,
-    hint_text="Ejemplo: San Felipe, UTC",
+    hint_text="Sector San Agustín, C. Quito y",
     border_color= ft.Colors.BLACK,
     color=ft.Colors.BLACK,
     capitalization=ft.TextCapitalization.WORDS
@@ -603,6 +603,7 @@ def listado_clientes():
 
 def editar_clientes(e,item):
     formulario.shadow=None
+    id_cliente=item["id_cliente"]
     nombres_cliente.value=item["NOMBRES"]
     apellidos_cliente.value=item["APELLIDOS"]
     cedula_cliente.value=item["CEDULA"]
@@ -614,7 +615,7 @@ def editar_clientes(e,item):
     direccion_cliente.value=item["DIRECCION"]
     form_global_clientes(e)
     boton_cancelar.on_click= lambda e: e.page.pop_dialog()
-    boton_guardar.on_click= lambda : ctr_cln.guardar_datos_modificados(e)
+    boton_guardar.on_click= lambda e: ctr_cln.guardar_datos_modificados(e, id_cliente)
     
 
 def view_clientes(page: ft.Page):
@@ -626,7 +627,7 @@ def view_clientes(page: ft.Page):
 
 def form_global_clientes(e):
     boton_cancelar.on_click= lambda e: e.page.pop_dialog()
-    boton_guardar.on_click= lambda : ctr_cln.guardar_datos_clientes(e,True)
+    boton_guardar.on_click= lambda e: ctr_cln.guardar_datos_clientes(e,True)
     formulario.shadow=None
     formulario_global=e.page.show_dialog(
         ft.AlertDialog(

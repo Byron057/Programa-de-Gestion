@@ -2,6 +2,8 @@ import flet as ft
 from views import reparaciones_view
 from database import reparaciones_db
 from controls import controls_catalogos_vehiculos as ctr_cat_veh
+from controls import controls_vehiculos as ctr_veh
+from views import vehiculos_view
 from components import *
 
 def limpiar_lista_reparaciones():
@@ -260,7 +262,7 @@ def validacion_general():
         reparaciones_view.siguiente_kilometraje.error=None
         
     if validacion_reparacion and validacion_repuestos:
-        validacion=True
+        validacion = validacion and validacion_reparacion and validacion_repuestos
     else:
         validacion=False
         
@@ -288,21 +290,22 @@ def guardar_repuestos_utilizados(id_orden_rep, id_repuesto, id_marca, id_proveed
     reparaciones_db.guardar_repuestos_utilizados(id_orden_rep, id_repuesto, id_marca, id_proveedor)
         
 def guardar_reparaciones(id_vehiculo):
-    if reparaciones_view.vehiculos_view.checkbox_agregar_reparacion.value==True:
-        id_orden_rep=guardar_campos_orden_reparacion(id_vehiculo)
-        resultado=ctr_cat_veh.guardar_campos_repuestos()
-        if resultado:
-            id_repuesto, id_marca, id_proveedor = resultado
+    if reparaciones_view.vehiculos_view.checkbox_agregar_reparacion.value == True:
+        id_orden_rep = guardar_campos_orden_reparacion(id_vehiculo)
 
+        # Cambio: se recorren todos los repuestos guardados.
+        repuestos = ctr_cat_veh.guardar_campos_repuestos()
+
+        for id_repuesto, id_marca, id_proveedor in repuestos:
             guardar_repuestos_utilizados(
                 id_orden_rep,
                 id_repuesto,
                 id_marca,
                 id_proveedor
             )
+
         guardar_campos_reparaciones(id_orden_rep)
         guardar_imagenes(id_orden_rep)
-        
 def guardar_imagenes(id_orden_reparacion):
     reparaciones_view.guardar_imagenes_vehiculos()
     for ruta in reparaciones_view.nuevas_rutas_imagenes:
@@ -314,10 +317,9 @@ def guardar_nueva_orden(e,id_vehiculo):
     validacion= validacion_general()  
     if validacion == True:
         id_orden_rep=guardar_campos_orden_reparacion(id_vehiculo)
-        resultado=ctr_cat_veh.guardar_campos_repuestos()
-        if resultado:
-            id_repuesto, id_marca, id_proveedor = resultado
+        repuestos = ctr_cat_veh.guardar_campos_repuestos()
 
+        for id_repuesto, id_marca, id_proveedor in repuestos:
             guardar_repuestos_utilizados(
                 id_orden_rep,
                 id_repuesto,
@@ -328,8 +330,13 @@ def guardar_nueva_orden(e,id_vehiculo):
         guardar_imagenes(id_orden_rep)
         guardado= True
         if guardado==True:
-            e.page.run_task(save_alert,e.page)
+            e.page.run_task(save_alert,e)
             limpiar_campos_reparacion()
             e.page.pop_dialog()
+            datos=ctr_veh.obtener_datos_vehiculos()
+            nuevo_item=datos[id_vehiculo]
+            vehiculos_view.cambiar_vista(
+                vehiculos_view.detalles_vehiculos(nuevo_item)
+            )
         else:
-            e.page.run_task(alerta_error,e.page,"Verifique si los datos ya estan en el sistema")
+            e.page.run_task(alerta_error,e,"Verifique si los datos ya estan en el sistema")

@@ -42,16 +42,26 @@ def mostrar_modelos(id):
     except sqlite3.Error as e:
         conn.close()
         print(e)
-def guardar_nuevo_modelo(id_marca,modelo):
+def guardar_nuevo_modelo(id_marca, modelo):
     try:
-        conn=db_core.conectBaseDeDatos()
-        query= conn.cursor()
-        query.execute("SELECT id_modelo FROM MODELOS_VEHICULOS WHERE MODELO  =?",(modelo,))
-        verificacion=query.fetchone()
+        conn = db_core.conectBaseDeDatos()
+        query = conn.cursor()
+        query.execute(
+            "SELECT id_modelo FROM MODELOS_VEHICULOS WHERE id_marca=? AND MODELO=?",
+            (id_marca, modelo)
+        )
+
+        verificacion = query.fetchone()
+
         if not verificacion:
-            query.execute('INSERT INTO MODELOS_VEHICULOS (id_marca,MODELO) VALUES (?,?)', (id_marca,modelo,))
+            query.execute(
+                "INSERT INTO MODELOS_VEHICULOS (id_marca, MODELO) VALUES (?, ?)",
+                (id_marca, modelo)
+            )
+
         conn.commit()
         conn.close()
+
     except sqlite3.Error as e:
         conn.close()
         print(e)

@@ -200,7 +200,7 @@ def guardar_datos_personal(e):
             e.page.run_task(alerta_error, e,"Verifique si la cedula ya existe en el sistema")
 
 
-def editar_datos_personal():
+def editar_datos_personal(id_personal):
     from views import personal_view
     cedula=personal_view.cedula_personal.value.strip()
     nombres= personal_view.nombres_personal.value.strip().title()
@@ -221,17 +221,17 @@ def editar_datos_personal():
         foto=""
     else:
         foto=personal_view.nueva_ruta
-    id=personal_view.id_actual
+    id=id_personal
     
     resultado=personal_db.editar_datos_personal(cedula, nombres, apellidos, telefono, correo, provincia, ciudad, direccion,foto,id)
     
     return resultado
 
-def guardar_datos_modificados(e):
+def guardar_datos_modificados(e, id_personal):
     from views import personal_view
     validacion=validacion_general()
     if validacion == True:
-        se_guardo_en_db = editar_datos_personal()
+        se_guardo_en_db = editar_datos_personal(id_personal)
         if se_guardo_en_db == True:
             
             e.page.pop_dialog()
@@ -239,7 +239,7 @@ def guardar_datos_modificados(e):
             e.page.run_task(save_alert,e)
             
             datos=obtener_datos_personal()
-            nuevo_item = datos[personal_view.id_actual]
+            nuevo_item = datos[id_personal]
 
             personal_view.cambiar_vista(
                 personal_view.detalles_personal(nuevo_item)

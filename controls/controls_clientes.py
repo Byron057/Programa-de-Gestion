@@ -211,7 +211,7 @@ def obtener_datos_clientes():
             
     return clientes
 
-def editar_datos_clientes():
+def editar_datos_clientes(id_cliente):
     cedula=clientes_view.cedula_cliente.value.strip()
     nombres=clientes_view.nombres_cliente.value.strip().title()
     apellidos= clientes_view.apellidos_cliente.value.strip().title()
@@ -226,24 +226,24 @@ def editar_datos_clientes():
         direccion="No se Registro una Direccion"
     else:
         direccion=clientes_view.direccion_cliente.value.strip()
-    id=clientes_view.id_actual
+    id=id_cliente
     #Flata registrar un vehiculo, campo obligatorio para mostrar reportes, si no esta asociado a un vehiculo este presentara una alerta
 
     resultado= clientes_db.editar_datos_clientes(cedula, nombres, apellidos, telefono, correo, provincia, ciudad, direccion,id)
     
     return resultado
 
-def guardar_datos_modificados(e):
+def guardar_datos_modificados(e,id_cliente):
     validacion= validacion_general()
     if validacion==True:
-        se_guardo_en_db= editar_datos_clientes()
+        se_guardo_en_db= editar_datos_clientes(id_cliente)
         if se_guardo_en_db == True:
             e.page.run_task(save_alert,e)
             
             e.page.pop_dialog()
             
             datos=obtener_datos_clientes()
-            nuevo_item=datos[clientes_view.id_actual]
+            nuevo_item=datos[id_cliente]
             clientes_view.cambiar_vista(
                 clientes_view.detalles_clientes(nuevo_item)
             )

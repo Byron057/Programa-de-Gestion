@@ -351,6 +351,24 @@ def actualizar_boton_repuestos():
         ft.ControlState.DEFAULT: ft.Colors.GREEN_400,
         ft.ControlState.DISABLED: ft.Colors.GREY_400
     }
+def fijar_texto_dropdown(e):
+    dropdown = e.control
+    texto = (dropdown.text or "").strip()
+
+    if not texto:
+        dropdown.value = None
+        return
+
+    if dropdown.value != texto:
+        existe = any(opt.text == texto for opt in dropdown.options)
+
+        if not existe:
+            dropdown.options.append(
+                ft.dropdown.Option(text=texto, style=ft.TextStyle(color="black"))
+            )
+
+        dropdown.value = texto
+        dropdown.text = texto
 
 def crear_campo_repuestos():
     
@@ -368,7 +386,8 @@ def crear_campo_repuestos():
             font_family="Roboto-Medium"
         ),
         capitalization=ft.TextCapitalization.WORDS,
-        on_text_change= limpiar_key_al_cambiar
+        on_text_change= limpiar_key_al_cambiar,
+        on_blur=fijar_texto_dropdown
     )
     marca_repuesto=ft.Dropdown(
         width=196,
@@ -385,7 +404,8 @@ def crear_campo_repuestos():
         ),
         
         capitalization=ft.TextCapitalization.WORDS,
-        on_text_change= limpiar_key_al_cambiar
+        on_text_change= limpiar_key_al_cambiar,
+        on_blur=fijar_texto_dropdown
     )
     proveedor_repuesto=ft.Dropdown(
         width=196,
@@ -401,7 +421,8 @@ def crear_campo_repuestos():
             font_family="Roboto-Medium"
         ),
         capitalization=ft.TextCapitalization.WORDS,
-        on_text_change= limpiar_key_al_cambiar
+        on_text_change= limpiar_key_al_cambiar,
+        on_blur=fijar_texto_dropdown
     )
     boton_general=ft.IconButton(
         icon=ft.Icons.ADD,
@@ -460,12 +481,30 @@ def crear_campo_repuestos():
         ]
     )
     def acccion_boton(e):
-        if boton_general.icon== ft.Icons.ADD:
-            lista_repuestos.controls.append(crear_campo_repuestos())
-            vehiculos_view.cargar_catalogos()
+        if boton_general.icon == ft.Icons.ADD:
+            nueva_fila = crear_campo_repuestos()
+
+            # Copia las opciones a la fila nueva sin tocar las filas anteriores.
+            nueva_fila.data["repuesto"].options = [
+                ft.dropdown.Option(text=opt.text, style=ft.TextStyle(color="black"))
+                for opt in repuesto.options
+            ]
+
+            nueva_fila.data["marca"].options = [
+                ft.dropdown.Option(text=opt.text, style=ft.TextStyle(color="black"))
+                for opt in marca_repuesto.options
+            ]
+
+            nueva_fila.data["proveedor"].options = [
+                ft.dropdown.Option(text=opt.text, style=ft.TextStyle(color="black"))
+                for opt in proveedor_repuesto.options
+            ]
+
+            lista_repuestos.controls.append(nueva_fila)
         else:
             if len(lista_repuestos.controls) > 1:
                 lista_repuestos.controls.remove(fila)
+
         actualizar_boton_repuestos()
     
     boton_general.on_click=acccion_boton

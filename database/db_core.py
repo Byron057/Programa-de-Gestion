@@ -262,7 +262,7 @@ def data_necesaria(db_path=RUTA_DB):
 
 def cargar_catalogo_provincias():
     try:
-        conn= sqlite3.connect("gestion_mecanica.db")
+        conn= sqlite3.connect(RUTA_DB)
         query= conn.cursor()
         query.execute('SELECT * FROM PROVINCIAS;')
         resultado= query.fetchall()
@@ -274,7 +274,7 @@ def cargar_catalogo_provincias():
 
 def cargar_catalogo_ciudades(id_prov):
     try:
-        conn= sqlite3.connect("gestion_mecanica.db")
+        conn= sqlite3.connect(RUTA_DB)
         query= conn.cursor()
         query.execute('SELECT id_ciudad, CIUDAD FROM CIUDADES WHERE id_prov=?', (id_prov,))
         resultado= query.fetchall()

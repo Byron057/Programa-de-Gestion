@@ -37,18 +37,27 @@ def gaurdar_datos_catalogos():
     
     
 def marca_change(e):
-    marca = vehiculos_view.marca_vehiculo.value or vehiculos_view.marca_vehiculo.text
+    # Cambio: se usa primero el texto visible/escrito.
+    # Antes se usaba primero value, y eso mantenía la marca seleccionada anterior
+    # aunque el usuario hubiera editado el texto.
+    marca = vehiculos_view.marca_vehiculo.text or vehiculos_view.marca_vehiculo.value
+
     if isinstance(marca, str):
         marca = marca.strip().title()
     else:
         marca = None
+
     id = next((m[0] for m in mostrar_marcas() if m[1] == marca), None)
-    
+
     modelos = catalogos_vehiculos_db.mostrar_modelos(id) if id else []
-    
+
     vehiculos_view.modelo_vehiculo.options = [
-        ft.dropdown.Option(text=m[1], style=ft.TextStyle(color="black")) for m in modelos
+        ft.dropdown.Option(text=m[1], style=ft.TextStyle(color="black"))
+        for m in modelos
     ]
+
+    # Cambio: si la marca escrita no existe, se vacían los modelos.
+    # Si existe, se cargan solo sus modelos.
     vehiculos_view.modelo_vehiculo.value = None
     vehiculos_view.modelo_vehiculo.text = ""
 
@@ -102,17 +111,22 @@ def validar_campos_repuestos():
     return validacion
 
 def guardar_campos_repuestos():
+    # Cambio: antes se retornaba en el primer repuesto encontrado.
+    # Ahora se acumulan todos los repuestos llenados.
+    repuestos_guardados = []
+
     for fila in reparaciones_view.lista_repuestos.controls[:]:
         if not fila.data["repuesto"].text and not fila.data["marca"].text and not fila.data["proveedor"].text:
             continue
-        else:
-            repuesto=fila.data["repuesto"].text.title()
-            marca=fila.data["marca"].text.title()
-            proveedor=fila.data["proveedor"].text.title()
-        
-            id_repuesto=catalogos_vehiculos_db.guardar_repuesto(repuesto)
-            id_marca=catalogos_vehiculos_db.guardar_marca_repuesto(marca)
-            id_proveedor=catalogos_vehiculos_db.guardar_proveedor_repuesto(proveedor)
-                
-            return id_repuesto, id_marca, id_proveedor
-    return None
+
+        repuesto = fila.data["repuesto"].text.title()
+        marca = fila.data["marca"].text.title()
+        proveedor = fila.data["proveedor"].text.title()
+
+        id_repuesto = catalogos_vehiculos_db.guardar_repuesto(repuesto)
+        id_marca = catalogos_vehiculos_db.guardar_marca_repuesto(marca)
+        id_proveedor = catalogos_vehiculos_db.guardar_proveedor_repuesto(proveedor)
+
+        repuestos_guardados.append((id_repuesto, id_marca, id_proveedor))
+
+    return repuestos_guardados

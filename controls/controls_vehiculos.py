@@ -231,25 +231,29 @@ def obtener_datos_vehiculos():
     return vehiculos
 
 def guardar_datos_vehiculos(e, cerrar_dialog=False):
-    validacion_vehiculo=validacion_general()
-    if vehiculos_view.checkbox_agregar_reparacion.value==True:
-        validacion_rep=ctr_rep.validacion_general()
-    else: 
-        validacion_rep=True
-        
-    if validacion_vehiculo==True and validacion_rep==True:
-        se_guardo_db, id_vehiculo= guardar_datos_limpios_vehiculo() 
-        ctr_rep.guardar_reparaciones(id_vehiculo) 
+    validacion_vehiculo = validacion_general()
+
+    if vehiculos_view.checkbox_agregar_reparacion.value == True:
+        validacion_rep = ctr_rep.validacion_general()
+    else:
+        validacion_rep = True
+
+    if validacion_vehiculo == True and validacion_rep == True:
+        se_guardo_db, id_vehiculo = guardar_datos_limpios_vehiculo()
+
         if se_guardo_db == True:
-            e.page.run_task(save_alert,e.page)
-            if cerrar_dialog== False:
+            ctr_rep.guardar_reparaciones(id_vehiculo)
+
+            e.page.run_task(save_alert, e)
+
+            if cerrar_dialog == False:
                 vehiculos_view.cambiar_vista(vehiculos_view.listado_vehiculos())
             else:
                 e.page.pop_dialog()
         else:
-            e.page.run_task(alerta_error,e.page,"Verifique si los datos ya estan en el sistema")
+            e.page.run_task(alerta_error, e, "Verifique si los datos ya estan en el sistema")
 
-def editar_datos_vehiculo():
+def editar_datos_vehiculo(id_veh):
     controls_catalogos_vehiculos.gaurdar_datos_catalogos()
     vehiculos_view.cargar_catalogos()
     marca=vehiculos_view.marca_vehiculo.text.strip().title()
@@ -278,20 +282,20 @@ def editar_datos_vehiculo():
         (co[0] for co in catalogos_vehiculos_db.mostrar_colores() if co[1] == color),
         None
     )
-    id_vehiculo= vehiculos_view.id_actual_veh
+    id_vehiculo= id_veh
     resultado=vehiculos_db.editar_datos_vehiculo(id_cliente, id_marca, id_modelo, placa, year, id_tipo, id_color,id_vehiculo)
     
     return resultado
 
-def guardar_datos_editados(e):
+def guardar_datos_editados(e, id_veh):
     validacion=validacion_general()
     if validacion==True:
-        se_guardo_db= editar_datos_vehiculo()
+        se_guardo_db= editar_datos_vehiculo(id_veh)
         if se_guardo_db == True:
             e.page.run_task(save_alert,e)
             e.page.pop_dialog()
             datos=obtener_datos_vehiculos()
-            nuevo_item=datos[vehiculos_view.id_actual_veh]
+            nuevo_item=datos[id_veh]
             vehiculos_view.cambiar_vista(
                 vehiculos_view.detalles_vehiculos(nuevo_item)
             )

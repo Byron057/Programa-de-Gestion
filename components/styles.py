@@ -7,19 +7,10 @@ class Icon(ft.Icon):
         self.color=color
         self.size=size
 def limpiar_key_al_cambiar(e):
-    control = e.control
-
-    # SOLO limpiar si realmente es texto libre vacío
-    if isinstance(control, ft.Dropdown):
-
-        # si hay value válido, NO tocarlo
-        if control.value:
-            return
-
-        # si el texto está vacío, limpiar
-        if not getattr(control, "text", ""):
-            control.value = None
-            control.update()
+    # Si el campo tiene algún dato guardado (como el ID del dropdown), lo limpiamos
+    if not e.control.text:
+        e.control.value = None
+        e.control.data = None
      
 class Text(ft.Text):
     def __init__(self, text, size=None,color=None , weight=None,height=None):

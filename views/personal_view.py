@@ -476,8 +476,6 @@ def listado_personal():
     )
 
 def detalles_personal(item):
-    global id_actual
-    id_actual=item["id_personal"]
     
     boton_editar=ft.Button(
         content=Text("Editar", 20, ft.Colors.WHITE),
@@ -654,9 +652,10 @@ def view_personal(page: ft.Page):
     return pantalla_personal
     
 def formulario_global(e, item):
-    global ruta_anterior
+    global ruta_anterior, nueva_ruta
     formulario_personal.bgcolor=ft.Colors.WHITE
     formulario_personal.shadow=None
+    id_personal= item["id_personal"]
     nombres_personal.value= item["NOMBRES"]
     apellidos_personal.value= item["APELLIDOS"]
     cedula_personal.value= item["CEDULA"]
@@ -666,12 +665,14 @@ def formulario_global(e, item):
     ctr_per.provincia_change(item["PROVINCIA"])
     ciudades.value=item["CIUDAD"]
     direccion_personal.value=item["DIRECCION"]
-    if item["FOTO"] !="":
-        ruta_anterior=item["FOTO"]
+    if item["FOTO"] != "":
+        ruta_anterior = item["FOTO"]
         construir_stack_foto(item["FOTO"])
     else:
-        foto_integrante.content= ctr_per.estado_incial_foto()
-    boton_guardar.on_click=lambda e: [guardar_imagen(),ctr_per.guardar_datos_modificados(e)]
+        ruta_anterior = None
+        nueva_ruta = None
+        foto_integrante.content = ctr_per.estado_incial_foto()
+    boton_guardar.on_click=lambda e: [guardar_imagen(),ctr_per.guardar_datos_modificados(e, id_personal)]
     boton_cancelar.on_click= lambda e: e.page.pop_dialog()
     return e.page.show_dialog(
         ft.AlertDialog(

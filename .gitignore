@@ -18,3 +18,5 @@ build
 Mecasoft.
 __pycache__
 Mecasoft.iss
+main.spec
+dist

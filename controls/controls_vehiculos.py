@@ -11,20 +11,20 @@ def total_vehiculos():
 
 def limpiar_formulario():
     vehiculos_view.marca_vehiculo.text=""
-    vehiculos_view.marca_vehiculo.value=""
+    vehiculos_view.marca_vehiculo.value=None
     vehiculos_view.marca_vehiculo.error_text=None
     vehiculos_view.modelo_vehiculo.text=""
-    vehiculos_view.modelo_vehiculo.value=""
+    vehiculos_view.modelo_vehiculo.value=None
     vehiculos_view.modelo_vehiculo.error_text=None
     vehiculos_view.placa_vehiculo.value=""
     vehiculos_view.placa_vehiculo.error=None
     vehiculos_view.año_vehiculo.value=""
     vehiculos_view.año_vehiculo.error=None
     vehiculos_view.tipo_vehiculo.text=""
-    vehiculos_view.tipo_vehiculo.value=""
+    vehiculos_view.tipo_vehiculo.value=None
     vehiculos_view.tipo_vehiculo.error_text=None
     vehiculos_view.color_vehiculo.text=""
-    vehiculos_view.color_vehiculo.value=""
+    vehiculos_view.color_vehiculo.value=None
     vehiculos_view.color_vehiculo.error_text=None
     vehiculos_view.propietario_vehiculo.value=None
     vehiculos_view.propietario_vehiculo.text=None

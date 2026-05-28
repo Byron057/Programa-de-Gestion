@@ -1,23 +1,20 @@
 import flet as ft
+from config import *
+inicializar_sistema()
 from database import db_core
 db_core.data_necesaria()
-import os
 import views
-def inicializar_carpetas_sistema():
-    ruta_fotos = os.path.join("assets", "fotos_personal")
-    ruta_imagenes_vehiculos=os.path.join("assets", "fotos_vehiculos" )
-    
-    os.makedirs(ruta_fotos, exist_ok=True)
-    os.makedirs(ruta_imagenes_vehiculos, exist_ok=True)
-    print("Directorios del sistema verificados.")
-inicializar_carpetas_sistema()
 
 def main(page:ft.Page):
-    page.title="Gestion"
-    page.window.maximized=True
+    page.title="Mecasoft"
+    page.window.width = 1400
+    page.window.height = 900
+    page.window.icon="MecaSoft.ico"
+
+    page.window.maximized = True
     def route_change():
         page.views.clear()
-        page.views.append(views.view_login(page))#cambiar entre login y dashboard cuando sea necesario
+        page.views.append(views.view_login(page))
         if page.route=="/dashboard":
             page.views.append(views.view_dashboard(page))
         page.update()
@@ -34,4 +31,3 @@ def main(page:ft.Page):
 
     route_change()
 ft.run(main, assets_dir="assets")
-

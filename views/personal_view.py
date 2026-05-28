@@ -3,6 +3,7 @@ from components import *
 from controls import controls_personal as ctr_per
 import os
 import shutil
+from config import *
 
 #variable que muestra la pantalla 
 pantalla_personal=ft.Column(expand=True)
@@ -91,15 +92,35 @@ async def  seleccionar_foto(e):
 ruta_anterior= None
 
 def guardar_imagen():
+
     global nueva_ruta
-    destino_imagen=os.path.join("assets","fotos_personal")
-    if ruta_anterior:
-        try:
-            nueva_ruta = shutil.copy(ruta_anterior, destino_imagen)
-        except shutil.SameFileError:
-            nueva_ruta = ruta_anterior 
-    else:
-        nueva_ruta=""
+
+    if not ruta_anterior:
+        nueva_ruta = ""
+        return
+
+    # Nombre archivo
+    nombre_archivo = os.path.basename(ruta_anterior)
+
+    # Ruta final dentro del sistema
+    ruta_destino = os.path.join(
+        RUTA_FOTOS_PERSONAL,
+        nombre_archivo
+    )
+
+    try:
+
+        # Copiar imagen
+        shutil.copy(
+            ruta_anterior,
+            ruta_destino
+        )
+
+    except shutil.SameFileError:
+        pass
+
+    # SIEMPRE guardar ruta final
+    nueva_ruta = ruta_destino
 
 foto_integrante = ft.Container(
     width=180,

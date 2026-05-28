@@ -285,15 +285,24 @@ def guardar_campos_orden_reparacion(id_vehiculo):
     return id_orden_rep
 
 def guardar_repuestos_utilizados(id_orden_rep, id_repuesto, id_marca, id_proveedor):
-    for fila in reparaciones_view.lista_reparaciones.controls[:]:
-        reparaciones_db.guardar_repuestos_utilizados(id_orden_rep, id_repuesto, id_marca, id_proveedor)
+    reparaciones_db.guardar_repuestos_utilizados(id_orden_rep, id_repuesto, id_marca, id_proveedor)
         
 def guardar_reparaciones(id_vehiculo):
     if reparaciones_view.vehiculos_view.checkbox_agregar_reparacion.value==True:
         id_orden_rep=guardar_campos_orden_reparacion(id_vehiculo)
-        id_repuesto, id_marca, id_proveedor=ctr_cat_veh.guardar_campos_repuestos()
-        guardar_repuestos_utilizados(id_orden_rep, id_repuesto, id_marca, id_proveedor)
+        resultado=ctr_cat_veh.guardar_campos_repuestos()
+        if resultado:
+            id_repuesto, id_marca, id_proveedor = resultado
+
+            guardar_repuestos_utilizados(
+                id_orden_rep,
+                id_repuesto,
+                id_marca,
+                id_proveedor
+            )
         guardar_campos_reparaciones(id_orden_rep)
+        guardar_imagenes(id_orden_rep)
+        
 def guardar_imagenes(id_orden_reparacion):
     reparaciones_view.guardar_imagenes_vehiculos()
     for ruta in reparaciones_view.nuevas_rutas_imagenes:

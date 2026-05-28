@@ -6,6 +6,7 @@ import controls.controls_personal as ctr_per
 import controls.controls_reparaciones as ctr_rep
 import database.reparaciones_db as rep_db
 import shutil, os
+from config import *
 
 fecha_actual= dt.datetime.now().strftime('%d/%m/%Y')
 
@@ -366,7 +367,8 @@ def crear_campo_repuestos():
             weight=ft.FontWeight.W_500,
             font_family="Roboto-Medium"
         ),
-        capitalization=ft.TextCapitalization.WORDS
+        capitalization=ft.TextCapitalization.WORDS,
+        on_text_change= limpiar_key_al_cambiar
     )
     marca_repuesto=ft.Dropdown(
         width=196,
@@ -382,7 +384,8 @@ def crear_campo_repuestos():
             font_family="Roboto-Medium"
         ),
         
-        capitalization=ft.TextCapitalization.WORDS
+        capitalization=ft.TextCapitalization.WORDS,
+        on_text_change= limpiar_key_al_cambiar
     )
     proveedor_repuesto=ft.Dropdown(
         width=196,
@@ -397,7 +400,8 @@ def crear_campo_repuestos():
             weight=ft.FontWeight.W_500,
             font_family="Roboto-Medium"
         ),
-        capitalization=ft.TextCapitalization.WORDS
+        capitalization=ft.TextCapitalization.WORDS,
+        on_text_change= limpiar_key_al_cambiar
     )
     boton_general=ft.IconButton(
         icon=ft.Icons.ADD,
@@ -578,14 +582,44 @@ galeria_imagenes=ft.Container(
 
 nuevas_rutas_imagenes=[]
 def guardar_imagenes_vehiculos():
-    destino_imagenes= os.path.join("assets", "fotos_vehiculos")
-    if imagenes_seleccionadas:
+
+    global nuevas_rutas_imagenes
+
+    nuevas_rutas_imagenes.clear()
+
+    if not imagenes_seleccionadas:
+        return
+
+    for ruta in imagenes_seleccionadas:
+
         try:
-            for ruta in imagenes_seleccionadas:
-                nueva_ruta=shutil.copy(ruta,destino_imagenes)
-                nuevas_rutas_imagenes.append(nueva_ruta)
-        except:
-            pass
+
+            nombre_archivo = os.path.basename(ruta)
+
+            ruta_destino = os.path.join(
+                RUTA_FOTOS_VEHICULOS,
+                nombre_archivo
+            )
+
+            try:
+
+                shutil.copy(
+                    ruta,
+                    ruta_destino
+                )
+
+            except shutil.SameFileError:
+                pass
+
+            nuevas_rutas_imagenes.append(
+                ruta_destino
+            )
+
+        except Exception as e:
+
+            print(
+                f"Error guardando imagen: {e}"
+            )
 
 formulario_reparaciones=ft.Column(
     #aqui se agregan los campos necesarios para poder registrar nuevas reparaciones, 
@@ -1051,7 +1085,6 @@ def detalles_reparaciones(e,orden):
 
             ruta = img["RUTA_IMAGEN"]
 
-            # Verificar si existe la imagen
             if not ruta or not os.path.exists(ruta):
                 continue
 
@@ -1063,8 +1096,7 @@ def detalles_reparaciones(e,orden):
                 clip_behavior=ft.ClipBehavior.HARD_EDGE,
 
                 content=ft.Image(
-                    src=ruta,
-                    fit=ft.ImageFit.COVER
+                    src=ruta
                 )
             )
 

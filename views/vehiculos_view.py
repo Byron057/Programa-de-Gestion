@@ -1,9 +1,7 @@
 import flet as ft
 from components import *
 from views import *
-import json
 import datetime as dt
-import os
 from controls import controls_catalogos_vehiculos as ctr_cat_veh
 from controls import controls_vehiculos as ctr_veh
 from controls import controls_reparaciones as ctr_rep
@@ -23,6 +21,8 @@ def validar_dropdown():
 
 
 def cargar_catalogos():
+    vehiculos_view.marca_vehiculo.value = None
+    vehiculos_view.modelo_vehiculo.value = None
     #carga los datos de todos los dropdown ademas permite actualizar si exite nuevos registros
     marca_vehiculo.options=[
         ft.dropdown.Option(
@@ -104,7 +104,6 @@ marca_vehiculo= ft.Dropdown(
     width=300,
     hint_text="Seleccione una Marca de un Vehiculo",
     border_color=ft.Colors.BLACK,
-    text="",
     color=ft.Colors.BLACK,
     bgcolor=ft.Colors.WHITE,
     editable=True,
@@ -113,14 +112,14 @@ marca_vehiculo= ft.Dropdown(
         weight=ft.FontWeight.W_500,
         font_family="Roboto-Medium"
     ),
-    on_select= lambda e: ctr_cat_veh.marca_change(e),
-    on_blur= lambda e: ctr_cat_veh.marca_change(e)
+    on_text_change=limpiar_key_al_cambiar,
+    #on_select= lambda e: ctr_cat_veh.marca_change(e),
+    #on_blur= lambda e: ctr_cat_veh.marca_change(e)
 
 )
 modelo_vehiculo= ft.Dropdown(
     width=300,
     hint_text="Seleccione un Modelo de un Vehiculo",
-    text="",
     border_color=ft.Colors.BLACK,
     color=ft.Colors.BLACK,
     bgcolor=ft.Colors.WHITE,
@@ -130,6 +129,7 @@ modelo_vehiculo= ft.Dropdown(
         weight=ft.FontWeight.W_500,
         font_family="Roboto-Medium"
     ),
+    on_text_change= limpiar_key_al_cambiar
     
 )
 placa_vehiculo=ft.TextField(
@@ -161,21 +161,20 @@ tipo_vehiculo=ft.Dropdown(
     hint_text="Seleccione el Tipo de Vehiculo",
     border_color=ft.Colors.BLACK,
     color=ft.Colors.BLACK,
-    text="",
     bgcolor=ft.Colors.WHITE,
     editable=True,
     error_style=ft.TextStyle(
         color=ft.Colors.RED_ACCENT_700,
         weight=ft.FontWeight.W_500,
         font_family="Roboto-Medium"
-    )
+    ),
+    on_text_change= limpiar_key_al_cambiar
     
 )
 color_vehiculo=ft.Dropdown(
     width=300,
     menu_height=220,
     hint_text="Selecione el Color del Vehiculo",
-    text="",
     editable=True,
     border_color=ft.Colors.BLACK,
     color=ft.Colors.BLACK,
@@ -184,7 +183,8 @@ color_vehiculo=ft.Dropdown(
         color=ft.Colors.RED_ACCENT_700,
         weight=ft.FontWeight.W_500,
         font_family="Roboto-Medium"
-    )
+    ),
+    on_text_change= limpiar_key_al_cambiar
 )
 propietario_vehiculo=ft.Dropdown(
     width=580,

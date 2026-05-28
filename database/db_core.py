@@ -1,11 +1,12 @@
 import sqlite3
 import json 
 import os
+from config import *
 
 
 def conectBaseDeDatos():
     try:
-        conn= sqlite3.connect("gestion_mecanica.db")
+        conn= sqlite3.connect(RUTA_DB)
         return conn
     except sqlite3.Error as error:
         print(error)
@@ -14,7 +15,7 @@ def conectBaseDeDatos():
 def tabla_vacia(query, tabla):
     query.execute(f"SELECT COUNT(*) FROM {tabla}")
     return query.fetchone()[0]==0
-def data_necesaria(db_path='gestion_mecanica.db'):
+def data_necesaria(db_path=RUTA_DB):
     try:
         conn=sqlite3.connect(db_path)
         query=conn.cursor()

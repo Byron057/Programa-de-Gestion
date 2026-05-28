@@ -37,13 +37,20 @@ def gaurdar_datos_catalogos():
     
     
 def marca_change(e):
-    marca=vehiculos_view.marca_vehiculo.text
-    id= next((m[0] for m in mostrar_marcas() if m[1]== marca),None)
+    marca = vehiculos_view.marca_vehiculo.value or vehiculos_view.marca_vehiculo.text
+    if isinstance(marca, str):
+        marca = marca.strip().title()
+    else:
+        marca = None
+    id = next((m[0] for m in mostrar_marcas() if m[1] == marca), None)
     
-    modelos= catalogos_vehiculos_db.mostrar_modelos(id)
+    modelos = catalogos_vehiculos_db.mostrar_modelos(id) if id else []
     
-    vehiculos_view.modelo_vehiculo.options=[ft.dropdown.Option(text= m[1],style= ft.TextStyle(color="black")) for m in modelos]
-    vehiculos_view.modelo_vehiculo.value=None
+    vehiculos_view.modelo_vehiculo.options = [
+        ft.dropdown.Option(text=m[1], style=ft.TextStyle(color="black")) for m in modelos
+    ]
+    vehiculos_view.modelo_vehiculo.value = None
+    vehiculos_view.modelo_vehiculo.text = ""
 
 def validar_campos_repuestos():
     validacion=True
@@ -79,13 +86,18 @@ def validar_campos_repuestos():
                 fila.data["espacio_proveedor"].visible=True
                 fila.data["espacio_boton"].visible=True
                 proovedor.error_text= None
-        
+        else:
+            repuesto.error_text=None
+            marca.error_text=None
+            proovedor.error_text= None
+            
         if not marca.error_text and not repuesto.error_text and not proovedor.error_text:
             fila.data["espacio_repuesto"].visible=False
             fila.data["espacio_marca"].visible=False
             fila.data["espacio_proveedor"].visible=False
             fila.data["espacio_boton"].visible=False
         else:
+            
             fila.data["espacio_boton"].visible=True
     return validacion
 

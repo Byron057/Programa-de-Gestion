@@ -146,7 +146,7 @@ def view_login(page: ft.Page):
           
           ft.TextButton("Recuperar Contraseña",
                style=ft.ButtonStyle(color=ft.Colors.BLACK),
-               on_click= recuperar_contraseña  
+               #on_click= recuperar_contraseña  
           ),     
      ],
           #Al ser un Row(Contenedor Horizontal), se alinea el contenido

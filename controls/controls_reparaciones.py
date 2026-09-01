@@ -16,6 +16,9 @@ def limpiar_lista_reparaciones():
             reparaciones_view.lista_reparaciones.controls.remove(fila)
         reparacion.value=None
         precio.value=None
+        
+        reparacion.error=None
+        precio.error=None
 
 def limpiar_lista_repuestos():
     for fila in reparaciones_view.lista_repuestos.controls[:]:
@@ -83,10 +86,14 @@ def limpiar_campos_reparacion():
     reparaciones_view.fecha_entrada.value=reparaciones_view.fecha_actual
     reparaciones_view.fecha_entrega.value=reparaciones_view.fecha_actual
     reparaciones_view.kilometraje_actual.value=None
+    reparaciones_view.kilometraje_actual.error=None
     reparaciones_view.siguiente_kilometraje.value=None
+    reparaciones_view.siguiente_kilometraje.error=None
     reparaciones_view.personal_encargado.value=None
     reparaciones_view.personal_encargado.text=None
+    reparaciones_view.personal_encargado.error_text=None
     reparaciones_view.precio_total_reaparacion.value=None
+    reparaciones_view.precio_total_reaparacion.error=None
     reparaciones_view.lista_imagenes.controls.clear()
     reparaciones_view.imagenes_seleccionadas.clear()
     reparaciones_view.nuevas_rutas_imagenes.clear()

@@ -261,8 +261,7 @@ def provincia_change(e):
     personal_view.ciudades.value=None
 
 
-def eliminar_datos_personal():
+def eliminar_datos_personal(id_personal):
     from views import personal_view
-    id=personal_view.id_actual
-    personal_db.eliminar_datos_personal(id)
+    personal_db.eliminar_datos_personal(id_personal)
     personal_view.cambiar_vista(personal_view.listado_personal())

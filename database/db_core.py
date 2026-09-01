@@ -253,6 +253,22 @@ def data_necesaria(db_path=RUTA_DB):
                     )
                       
         """)
+        query.execute("""
+            CREATE TABLE IF NOT EXISTS USUARIOS(
+                id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
+                NOMBRE_USUARIO TEXT,
+                APELLIDO_USUARIO TEXT,
+                CORREO TEXT,
+                CONTRASEÑA TEXT,
+                TELEFONO TEXT
+            )
+        """)
+        if tabla_vacia(query, "TIPOS_VEHICULOS"):
+            query.executescript("""
+              INSERT INTO USUARIOS(id_usuario,NOMBRE_USUARIO, APELLIDO_USUARIO, CORREO, CONTRASEÑA, TELEFONO) VALUES
+            (1, "MECASOFT", null, "MECASOFT2026", "MECASOFT2026", null);
+            """)
+     
         
         
         conn.commit()
@@ -280,6 +296,64 @@ def cargar_catalogo_ciudades(id_prov):
         resultado= query.fetchall()
         conn.close()
         return resultado
-    except sqlite3.Error as errorw:
+    except sqlite3.Error as error:
         conn.close()
-        print(errorw)
+        print(error)
+def datos_login():
+    try:
+        conn = sqlite3.connect(RUTA_DB)
+        query= conn.cursor()
+        query.execute('SELECT * FROM USUARIOS WHERE id_usuario=1')
+        resultado= query.fetchall()
+        conn.close()
+        return resultado
+    except sqlite3.Error as error:
+        conn.close()
+        print(error)
+        
+def obtener_actividad_reciente():
+    # 1. Usar la ruta correcta del archivo de configuración
+    conexion = sqlite3.connect(RUTA_DB) 
+    cursor = conexion.cursor()
+    resultados = []
+
+    try:
+        # 2. Último Cliente (Se concatena NOMBRES y APELLIDOS. Se omite fecha porque no existe en la BD)
+        cursor.execute("""
+            SELECT 'Nuevo Cliente', NOMBRES || ' ' || APELLIDOS, CEDULA 
+            FROM CLIENTES 
+            ORDER BY id_cliente DESC LIMIT 1
+        """)
+        ultimo_cliente = cursor.fetchone() 
+        if ultimo_cliente:
+            resultados.append(ultimo_cliente)
+
+        # 3. Último Vehículo (Se usa id_vehiculo)
+        cursor.execute("""
+            SELECT 'Nuevo Vehículo', M.MODELO, V.PLACA 
+            FROM VEHICULOS V
+            INNER JOIN MODELOS_VEHICULOS M ON V.id_modelo = M.id_modelo
+            ORDER BY V.id_vehiculo DESC LIMIT 1
+        """)
+        ultimo_vehiculo = cursor.fetchone()
+        if ultimo_vehiculo:
+            resultados.append(ultimo_vehiculo)
+
+        # 4. Última Reparación (Uniendo REPARACIONES_REALIZADAS con ORDEN_REPARACION para sacar la fecha)
+        cursor.execute("""
+            SELECT 'Nueva Reparación', R.REPARACION, V.PLACA 
+            FROM REPARACIONES_REALIZADAS R
+            INNER JOIN ORDEN_REPARACION O ON R.id_orden_reparacion = O.id_orden_reparacion
+            INNER JOIN VEHICULOS V ON O.id_vehiculo = V.id_vehiculo
+            ORDER BY R.id_reparacion DESC LIMIT 1
+        """)
+        ultima_reparacion = cursor.fetchone()
+        if ultima_reparacion:
+            resultados.append(ultima_reparacion)
+
+        return resultados 
+
+    except sqlite3.Error as e:
+        print(f"Error de SQLite: {e}")
+        conexion.close()
+        return []

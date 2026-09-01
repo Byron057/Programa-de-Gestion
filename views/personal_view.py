@@ -476,7 +476,7 @@ def listado_personal():
     )
 
 def detalles_personal(item):
-    
+    id_personal= item["id_personal"]
     boton_editar=ft.Button(
         content=Text("Editar", 20, ft.Colors.WHITE),
         bgcolor=ft.Colors.BLUE_600,
@@ -485,7 +485,7 @@ def detalles_personal(item):
     boton_eliminar=ft.Button(
         content=Text("Eliminar", 20, ft.Colors.WHITE),
         bgcolor=ft.Colors.RED_700,
-        on_click= lambda e: ctr_per.eliminar_datos_personal()
+        on_click= lambda e: ctr_per.eliminar_datos_personal(id_personal)
     )
     
     if item["FOTO"]:

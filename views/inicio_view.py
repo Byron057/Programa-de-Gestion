@@ -1,4 +1,5 @@
 import flet as ft
+from database import db_core
 from components import *
 def view_inicio(page: ft.Page):
     from controls import controls_clientes, controls_vehiculos, controls_personal
@@ -53,7 +54,7 @@ def view_inicio(page: ft.Page):
             padding=20,
             content=ft.Column( 
                 controls=[
-                    Text("Nombre Local...",60,ft.Colors.BLACK,"w900"),
+                    Text("Automotriz Velastegui",60,ft.Colors.BLACK,"w900"),
                     ft.Divider(height=10, color=ft.Colors.BLACK), # Espaciador
                     ft.Column(
                         controls=[
@@ -80,14 +81,60 @@ def view_inicio(page: ft.Page):
                     ft.Divider(height=20, color=ft.Colors.GREY_800), # Línea divisoria
                     
                     # 3. Aquí podrías poner un área de texto o una tabla
-                    ft.Text("Últimos registros:", size=20, color=ft.Colors.BLACK),
+                    ft.Text("Últimos Registros del Sistema", size=20, color=ft.Colors.BLACK, weight="w600"),
                     ft.Container(
                         expand=True,
-                        bgcolor=ft.Colors.GREY_800,
+                        bgcolor=ft.Colors.WHITE,
                         border_radius=10,
-                        padding=10,
-                        content=ft.Text("Aquí irá la base de datos de SQLite pronto...", color=ft.Colors.GREY_400)
+                        border=ft.border.all(1.5, ft.Colors.BLACK87), # Borde estilo MecaSoft
+                        clip_behavior=ft.ClipBehavior.HARD_EDGE,
+                        padding=0,
+                        content=ft.Column(
+                            expand=True,
+                            scroll=ft.ScrollMode.AUTO,
+                            controls=[
+                                ft.DataTable(
+                                    width=float("inf"),
+                                    heading_row_color=ft.Colors.BLUE_900,
+                                    heading_row_height=50,
+                                    data_row_min_height=75, # Hacemos las filas más altas para que llenen el espacio vertical
+                                    data_row_max_height=75,
+                                    divider_thickness=0.5,
+                                    # IMPORTANTE: Forzamos el ancho de las columnas para que llenen el espacio a la derecha
+                                    columns=[
+                                        ft.DataColumn(ft.Container(content=ft.Text("TIPO DE REGISTRO", color=ft.Colors.WHITE, weight="bold"), width=230)),
+                                        ft.DataColumn(ft.Container(content=ft.Text("DETALLE", color=ft.Colors.WHITE, weight="bold"), width=350)),
+                                        ft.DataColumn(ft.Container(content=ft.Text("IDENTIFICADOR", color=ft.Colors.WHITE, weight="bold"), width=200)),
+                                    ],
+                                    rows=[
+                                        ft.DataRow(cells=[
+                                            ft.DataCell(
+                                                ft.Row([
+                                                    ft.Icon(
+                                                        ft.Icons.PERSON if fila[0] == 'Nuevo Cliente' else (ft.Icons.DIRECTIONS_CAR if fila[0] == 'Nuevo Vehículo' else ft.Icons.BUILD_CIRCLE),
+                                                        color=ft.Colors.GREEN_600 if fila[0] == 'Nuevo Cliente' else (ft.Colors.ORANGE_600 if fila[0] == 'Nuevo Vehículo' else ft.Colors.BLUE_600),
+                                                    ),
+                                                    ft.Text(str(fila[0]), color=ft.Colors.BLACK87, weight="w600")
+                                                ])
+                                            ), 
+                                            ft.DataCell(ft.Text(str(fila[1]), color=ft.Colors.BLACK87)),
+                                            ft.DataCell(
+                                                ft.Container(
+                                                    padding=ft.padding.symmetric(horizontal=12, vertical=6),
+                                                    bgcolor=ft.Colors.GREY_100,
+                                                    border_radius=6,
+                                                    border=ft.Border.all(1, ft.Colors.GREY_300),
+                                                    content=ft.Text(str(fila[2]), color=ft.Colors.BLACK87, weight="bold")
+                                                )
+                                            ),
+                                        ])
+                                        for fila in db_core.obtener_actividad_reciente()
+                                    ]
+                                )
+                            ]
+                        )
                     )
+                    
                 ]
             )
         )

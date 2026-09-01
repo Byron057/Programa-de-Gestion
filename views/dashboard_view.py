@@ -1,14 +1,45 @@
 import flet as ft
 import asyncio
 import views
+import threading
+import time
+from datetime import datetime
+
 def view_dashboard(page: ft.Page):
+    txt_fecha_hora = ft.Text(size=15, weight="w600", color=ft.Colors.BLACK_45)
+
+    async def actualizar_reloj():
+        while True:
+            ahora = datetime.now().strftime("%d/%m/%Y  |  %I:%M:%S %p")
+            txt_fecha_hora.value = ahora
+            try:
+                txt_fecha_hora.update()
+            except Exception:
+                pass
+            await asyncio.sleep(1) # Pausa de 1 segundo sin bloquear la app
+
+    # Ejecutamos la tarea en segundo plano vinculada a la página
+    page.run_task(actualizar_reloj)
+    
     barra_superior_derecha = ft.Container(
         height=60, # Altura fija para la barra
         bgcolor=ft.Colors.BLUE_GREY_50, # Un gris muy clarito o blanco
         padding=ft.padding.symmetric(horizontal=20),
-        content=ft.Row(
+        content=ft.Row( 
             alignment=ft.MainAxisAlignment.END, # Empuja el título a la izq y el botón a la der
             controls=[
+               ft.Row(
+                    spacing=8,
+                    controls=[
+                        ft.Icon(
+                            icon=ft.Icons.CALENDAR_TODAY,
+                            color=ft.Colors.BLACK_45, # Combina con tu menú izquierdo
+                            size=20
+                        ),
+                        txt_fecha_hora # El texto que se actualiza solo
+                    ]
+                ),
+                ft.Container(expand=True),
                 ft.Icon(
                     icon=ft.Icons.ACCOUNT_CIRCLE,
                     color=ft.Colors.BLACK_45, 
@@ -25,19 +56,6 @@ def view_dashboard(page: ft.Page):
                             disabled=True
                             
                         )
-                    ]
-                ),
-                ft.PopupMenuButton(
-                    icon=ft.Icon(ft.Icons.MORE_VERT_ROUNDED, color=ft.Colors.BLACK),
-                    bgcolor=ft.Colors.WHITE,
-                    items=[
-                        ft.PopupMenuItem(
-                            ft.Text("Acerca de",color=ft.Colors.BLACK)
-                        ),
-                        ft.PopupMenuItem(
-                            ft.Text("Configuración",color=ft.Colors.BLACK)
-                        )
-                        # Aquí puedes agregar más opciones fácilmente
                     ]
                 )
                 
@@ -117,7 +135,7 @@ def view_dashboard(page: ft.Page):
             #mientras esta_seleccionado==True este se pinta de otro color
             bgcolor=ft.Colors.BLUE_700 if esta_seleccionado else ft.Colors.TRANSPARENT,
             #tamaño y espacio de los botones
-            padding=ft.padding.symmetric(vertical=15, horizontal=20),
+            padding=ft.Padding.symmetric(vertical=15, horizontal=20),
             ink=True, # Hace el efecto de onda al hacer clic
             # Al hacer clic, enviamos el número de este botón a la función maestra
             on_click=lambda e: cambiar_pestana(indice) 
@@ -167,7 +185,7 @@ def view_dashboard(page: ft.Page):
                         alignment=ft.MainAxisAlignment.START
                     ),
                     bgcolor=ft.Colors.TRANSPARENT,
-                    padding=ft.padding.symmetric(vertical=15, horizontal=20),
+                    padding=ft.Padding.symmetric(vertical=15, horizontal=20),
                     ink=True,
                     on_click= lambda e: asyncio.create_task(page.push_route("/"))
                             

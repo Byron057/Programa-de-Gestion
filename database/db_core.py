@@ -263,7 +263,7 @@ def data_necesaria(db_path=RUTA_DB):
                 TELEFONO TEXT
             )
         """)
-        if tabla_vacia(query, "TIPOS_VEHICULOS"):
+        if tabla_vacia(query, "USUARIOS"):
             query.executescript("""
               INSERT INTO USUARIOS(id_usuario,NOMBRE_USUARIO, APELLIDO_USUARIO, CORREO, CONTRASEÑA, TELEFONO) VALUES
             (1, "MECASOFT", null, "MECASOFT2026", "MECASOFT2026", null);

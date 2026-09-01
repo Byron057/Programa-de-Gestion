@@ -47,7 +47,6 @@ def inicializar_sistema():
         exist_ok=True
     )
 
-    print("Directorios del sistema verificados.")
 
 
 def ruta_recurso(relative_path):

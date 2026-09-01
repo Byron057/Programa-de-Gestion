@@ -107,10 +107,7 @@ def view_dashboard(page: ft.Page):
             cuerpo_contenido.controls = [
                views.view_vehiculos(page)
             ]#Se creara diferentes archivos para cada apartado
-        elif indice == 3:
-           cuerpo_contenido.controls = [
-               views.view_reparaciones(page)
-           ]
+   
         elif indice == 4:
             cuerpo_contenido.controls=[
                 views.view_personal(page)

@@ -129,6 +129,7 @@ def view_login(page: ft.Page):
           weight="w500"    
      )
      email = ft.TextField(
+          width=300,
           label="Correo",
           label_style=ft.TextStyle(color=ft.Colors.BLACK, weight="w500"),
           border_color=ft.Colors.BLACK,
@@ -136,6 +137,7 @@ def view_login(page: ft.Page):
           prefix_icon=ft.Icons.EMAIL   
      )
      password = ft.TextField(
+          width=300,
         label="Contraseña",
         label_style=ft.TextStyle(color=ft.Colors.BLACK, weight="w500"),
         border_color=ft.Colors.BLACK,
@@ -176,8 +178,8 @@ def view_login(page: ft.Page):
           ),
           controls=[
                ft.Container(
-                    width=500,
-                    height=700,
+                    width=min(500, page.width -40),
+                    height=min(700, page.height -40),
                     border_radius=20,
                     bgcolor=ft.Colors.BLUE,
                     content= ft.Column(

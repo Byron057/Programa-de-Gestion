@@ -376,7 +376,7 @@ def agregar_personal():
         content=ft.Column(
             expand=True,
             controls=[
-                Text("Registrar Nuevo Cliente", 35, ft.Colors.BLACK, "w500" ),
+                Text("Registrar Nuevo Personal", 35, ft.Colors.BLACK, "w500" ),
                 ft.Divider(),
                 ft.Row(
                     alignment=ft.MainAxisAlignment.CENTER,
@@ -589,7 +589,7 @@ def detalles_personal(item):
                                 on_click=lambda e: cambiar_vista(listado_personal())
                             ),
                             ft.Text(
-                                "Detalles del Cliente",
+                                "Detalles del Personal",
                                 size=20,
                                 weight="bold",
                                 color=ft.Colors.BLACK

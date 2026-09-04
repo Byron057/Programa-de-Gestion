@@ -651,20 +651,24 @@ def view_personal(page: ft.Page):
     pantalla_personal.controls=[listado_personal()]
     return pantalla_personal
     
+
 def formulario_global(e, item):
     global ruta_anterior, nueva_ruta
-    formulario_personal.bgcolor=ft.Colors.WHITE
-    formulario_personal.shadow=None
-    id_personal= item["id_personal"]
-    nombres_personal.value= item["NOMBRES"]
-    apellidos_personal.value= item["APELLIDOS"]
-    cedula_personal.value= item["CEDULA"]
-    numero_telefono_personal.value= item["TELEFONO"]
-    correo_personal.value=item["CORREO"]
-    provincias.value=item["PROVINCIA"]
+
+    formulario_personal.bgcolor = ft.Colors.WHITE
+    formulario_personal.shadow = None
+
+    id_personal = item["id_personal"]
+    nombres_personal.value = item["NOMBRES"]
+    apellidos_personal.value = item["APELLIDOS"]
+    cedula_personal.value = item["CEDULA"]
+    numero_telefono_personal.value = item["TELEFONO"]
+    correo_personal.value = item["CORREO"]
+    provincias.value = item["PROVINCIA"]
     ctr_per.provincia_change(item["PROVINCIA"])
-    ciudades.value=item["CIUDAD"]
-    direccion_personal.value=item["DIRECCION"]
+    ciudades.value = item["CIUDAD"]
+    direccion_personal.value = item["DIRECCION"]
+
     if item["FOTO"] != "":
         ruta_anterior = item["FOTO"]
         construir_stack_foto(item["FOTO"])
@@ -672,34 +676,46 @@ def formulario_global(e, item):
         ruta_anterior = None
         nueva_ruta = None
         foto_integrante.content = ctr_per.estado_incial_foto()
-    boton_guardar.on_click=lambda e: [guardar_imagen(),ctr_per.guardar_datos_modificados(e, id_personal)]
-    boton_cancelar.on_click= lambda e: e.page.pop_dialog()
+
+    boton_guardar.on_click = lambda e: [
+        guardar_imagen(),
+        ctr_per.guardar_datos_modificados(e, id_personal)
+    ]
+
+    boton_cancelar.on_click = lambda e: e.page.pop_dialog()
+
     return e.page.show_dialog(
         ft.AlertDialog(
             modal=True,
             open=True,
             bgcolor=ft.Colors.WHITE,
-            content= ft.Column(
-                controls= [
-                    ft.Container(
-                    width=920,
-                    height=580,
-                    content=formulario_personal
-                    ),
-                    ft.Container(
-                        expand=True,
-                        content=ft.Row(
-                            alignment=ft.MainAxisAlignment.END,
+            content=ft.Container(
+                width=950,
+                height=700,
+                padding=10,
+                content=ft.Column(
+                    expand=True,
+                    spacing=10,
+                    controls=[
+                        ft.Container(
                             expand=True,
+                            content=formulario_personal
+                        ),
+
+
+                        ft.Row(
+                            alignment=ft.MainAxisAlignment.END,
+                            spacing=10,
                             controls=[
                                 boton_cancelar,
                                 boton_guardar
                             ]
                         )
-                    )  
-                ]
+                    ]
+                )
             )
         )
     )
+
     
 #FALTA AGREGAR HISTORIAL DE REPARACIONES ADEMAS DE CORREGIR ERRORES QUE SE PRESENTEN EN EL FUTUR    O

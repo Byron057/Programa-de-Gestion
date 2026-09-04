@@ -695,29 +695,41 @@ def view_vehiculos(page: ft.Page):
 
 
 def form_global_veh(e):
-    boton_cancelar.on_click= lambda e: e.page.pop_dialog()
-    boton_guardar.on_click= lambda e: ctr_veh.guardar_datos_vehiculos(e,True),
-    formulario_global=e.page.show_dialog(
+    boton_cancelar.on_click = lambda e: e.page.pop_dialog()
+
+    boton_guardar.on_click = lambda e: ctr_veh.guardar_datos_vehiculos(e, True)
+
+    formulario_global = e.page.show_dialog(
         ft.AlertDialog(
             modal=True,
             open=True,
             bgcolor=ft.Colors.WHITE,
-            content= ft.Column(
-                scroll=ft.ScrollMode.AUTO,
-                controls= [
-                    formulario_vehiculos,
-                    ft.Divider(color=ft.Colors.TRANSPARENT),
-                    ft.Container(
-                        content=ft.Row(
+            content=ft.Container(
+                width=820,
+                height=700,
+                padding=10,
+                content=ft.Column(
+                    expand=True,
+                    spacing=10,
+                    controls=[
+                        ft.Container(
+                            expand=True,
+                            content=formulario_vehiculos
+                        ),
+
+                        ft.Row(
                             alignment=ft.MainAxisAlignment.END,
+                            spacing=10,
                             controls=[
                                 boton_cancelar,
                                 boton_guardar
                             ]
                         )
-                    )  
-                ]
+                    ]
+                )
             )
         )
     )
+
+    return formulario_global
     return formulario_global

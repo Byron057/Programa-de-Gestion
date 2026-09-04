@@ -624,36 +624,42 @@ def view_clientes(page: ft.Page):
     return pantalla_clientes
     
 
-
 def form_global_clientes(e):
-    boton_cancelar.on_click= lambda e: e.page.pop_dialog()
-    boton_guardar.on_click= lambda e: ctr_cln.guardar_datos_clientes(e,True)
-    formulario.shadow=None
-    formulario_global=e.page.show_dialog(
+    boton_cancelar.on_click = lambda e: e.page.pop_dialog()
+    boton_guardar.on_click = lambda e: ctr_cln.guardar_datos_clientes(e, True)
+    formulario.shadow = None
+
+    formulario_global = e.page.show_dialog(
         ft.AlertDialog(
             modal=True,
             open=True,
             bgcolor=ft.Colors.GREY_200,
-            content= ft.Column(
-                controls= [
-                    ft.Container(
-                    width=750,
-                    height=580,
-                    content=formulario
-                    ),
-                    ft.Container(
-                        expand=True,
-                        content=ft.Row(
-                            alignment=ft.MainAxisAlignment.END,
+            content=ft.Container(
+                width=820,
+                height=750,
+                padding=10,
+                content=ft.Column(
+                    expand=True,
+                    spacing=10,
+                    controls=[
+                        ft.Container(
                             expand=True,
+                            content=formulario
+                        ),
+
+
+                        ft.Row(
+                            alignment=ft.MainAxisAlignment.END,
+                            spacing=10,
                             controls=[
                                 boton_cancelar,
                                 boton_guardar
                             ]
                         )
-                    )  
-                ]
+                    ]
+                )
             )
         )
     )
+
     return formulario_global

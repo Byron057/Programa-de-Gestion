@@ -376,7 +376,7 @@ def agregar_personal():
         content=ft.Column(
             expand=True,
             controls=[
-                Text("Registrar Nuevo Personal", 35, ft.Colors.BLACK, "w500" ),
+                Text("Registrar Nuevo Personal}}}}}}}}}}", 35, ft.Colors.BLACK, "w500" ),
                 ft.Divider(),
                 ft.Row(
                     alignment=ft.MainAxisAlignment.CENTER,

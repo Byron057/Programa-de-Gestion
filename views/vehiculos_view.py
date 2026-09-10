@@ -204,7 +204,7 @@ propietario_vehiculo=ft.Dropdown(
 boton_nuevo_cliente=ft.Button(
     Icon(ft.Icons.ADD, ft.Colors.WHITE,20),
     bgcolor=ft.Colors.BLUE_700,
-    on_click= lambda e: clientes_view.form_global_clientes(e)
+    on_click= lambda e: clientes_view.form_global_clientes(e,True)
 )
 
 #se separo para poder mostrar o no en el formulario
@@ -212,7 +212,7 @@ estado_veh=ft.Row(
     spacing=30,
     alignment=ft.MainAxisAlignment.CENTER,
     controls=[
-        Text("Estado del Vehículo", 20, ft.Colors.BLACK, "w400"),
+        Text("Nueva Reparación", 20, ft.Colors.BLACK, "w400"),
         ft.VerticalDivider(),
         ft.Container(width=420)
     ]
@@ -731,5 +731,4 @@ def form_global_veh(e):
         )
     )
 
-    return formulario_global
     return formulario_global

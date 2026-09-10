@@ -128,12 +128,12 @@ def guardar_datos_limpios_vehiculo():
     placa=vehiculos_view.placa_vehiculo.value.strip().upper()
     year=vehiculos_view.año_vehiculo.value.strip().title()
     
-    tipo=vehiculos_view.tipo_vehiculo.text
+    tipo=vehiculos_view.tipo_vehiculo.text.strip().title()
     id_tipo=next(
         (ti[0] for ti in catalogos_vehiculos_db.mostrar_tipos_vehiculos() if ti[1]== tipo),
         None
     )
-    color=vehiculos_view.color_vehiculo.text
+    color=vehiculos_view.color_vehiculo.text.strip().title()
     id_color=next(
         (co[0] for co in catalogos_vehiculos_db.mostrar_colores() if co[1] == color),
         None
@@ -272,12 +272,12 @@ def editar_datos_vehiculo(id_veh):
     placa=vehiculos_view.placa_vehiculo.value.strip().upper()
     year=vehiculos_view.año_vehiculo.value.strip().title()
     
-    tipo=vehiculos_view.tipo_vehiculo.text
+    tipo=vehiculos_view.tipo_vehiculo.text.strip().title()
     id_tipo=next(
         (ti[0] for ti in catalogos_vehiculos_db.mostrar_tipos_vehiculos() if ti[1]== tipo),
         None
     )
-    color=vehiculos_view.color_vehiculo.text
+    color=vehiculos_view.color_vehiculo.text.strip().title()
     id_color=next(
         (co[0] for co in catalogos_vehiculos_db.mostrar_colores() if co[1] == color),
         None

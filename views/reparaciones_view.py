@@ -592,7 +592,7 @@ async def pick_files(e):
 seleccionar_imagen=ft.Container(
     width=50,
     height=90,
-    bgcolor=ft.Colors.GREY_200,
+    bgcolor=ft.Colors.WHITE,
     border_radius=5,
     alignment=ft.Alignment.CENTER_LEFT,
     content=(
@@ -776,7 +776,7 @@ formulario_reparaciones=ft.Column(
 def registrar_nueva_orden(e, id_vehiculo):
     seleccionar_imagen.bgcolor=ft.Colors.WHITE
     boton_cancelar= ft.Button(
-        content=Text("Cancelar",20, ft.Colors.BLACK),
+        content=ft.Text("Cancelar",20, ft.Colors.BLACK),
         bgcolor=ft.Colors.GREY_300,
         style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=1)),
         on_click=lambda e: [e.page.pop_dialog(),ctr_rep.limpiar_campos_reparacion()]
@@ -1210,11 +1210,18 @@ def detalles_reparaciones(e,orden):
                     ft.Row(
                         alignment=ft.MainAxisAlignment.END,
                         controls=[
+                            
                             ft.Button(
                                 content=Text("Regresar",20, ft.Colors.BLACK),
                                 bgcolor=ft.Colors.GREY_300,
                                 style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=1)),
                                 on_click=lambda e: [e.page.pop_dialog()]
+                            ),
+                           ft.Button(
+                                content=Text("Editar", 20, ft.Colors.WHITE),
+                                bgcolor=ft.Colors.BLUE_600,
+                                on_click= lambda e: editar_rep(e,orden,True),
+                                style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=1)),
                             )
                         ] 
                     )
@@ -1300,3 +1307,67 @@ def hitorial_reparaciones(item):
             historial_reparaciones_registradas(item)
         ]
     )
+    
+def editar_rep(e,orden,edicion):
+    if edicion == True:
+        ctr_rep.limpiar_campos_reparacion()
+    form_global(e,1)
+def form_global(e, id_vehiculo):
+    boton_cancelar= ft.Button(
+        content=Text("Cancelar",20, ft.Colors.BLACK),
+        bgcolor=ft.Colors.GREY_300,
+        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=1)),
+        on_click=lambda e: [e.page.pop_dialog(),ctr_rep.limpiar_campos_reparacion()]
+    )
+    boton_guardar=ft.Button(
+        content=Text("Guardar", 20, ft.Colors.WHITE),
+        disabled=False,
+        style=ft.ButtonStyle(
+            bgcolor={
+                ft.ControlState.DISABLED: ft.Colors.GREY_400, 
+                ft.ControlState.DEFAULT: ft.Colors.BLUE_700   
+            },
+            color={
+                ft.ControlState.DISABLED: ft.Colors.GREY_600, 
+                ft.ControlState.DEFAULT: ft.Colors.WHITE      
+            },
+            shape=ft.RoundedRectangleBorder(radius=1)
+        )
+    )
+    formulario_global=e.page.show_dialog(
+        ft.AlertDialog(
+            modal=True,
+            open=True,
+            bgcolor=ft.Colors.WHITE,
+            content= ft.Column(
+                width=720,
+                height=540,
+                scroll=ft.ScrollMode.AUTO,
+                controls= [
+                    ft.Row(
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        controls=[
+                            ft.Text(
+                            "Nueva Reparacion",
+                            size=30,
+                            weight="w500",
+                            color=ft.Colors.BLACK
+                            )
+                        ]
+                    ),
+                    formulario_reparaciones,
+                    ft.Divider(color=ft.Colors.TRANSPARENT),
+                    ft.Container(
+                        content=ft.Row(
+                            alignment=ft.MainAxisAlignment.END,
+                            controls=[
+                                boton_cancelar,
+                                boton_guardar
+                            ]
+                        )
+                    )  
+                ]
+            )
+        )
+    )
+    return formulario_global

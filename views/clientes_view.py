@@ -613,7 +613,7 @@ def editar_clientes(e,item):
     ctr_cln.provincia_change(item["PROVINCIA"])
     ciudades.value=item["CIUDAD"]
     direccion_cliente.value=item["DIRECCION"]
-    form_global_clientes(e)
+    form_global_clientes(e,False)
     boton_cancelar.on_click= lambda e: e.page.pop_dialog()
     boton_guardar.on_click= lambda e: ctr_cln.guardar_datos_modificados(e, id_cliente)
     
@@ -624,7 +624,11 @@ def view_clientes(page: ft.Page):
     return pantalla_clientes
     
 
-def form_global_clientes(e):
+def form_global_clientes(e,limpiar):
+    if limpiar == True:
+        ctr_cln.limpiar_formulario()
+    
+    
     boton_cancelar.on_click = lambda e: e.page.pop_dialog()
     boton_guardar.on_click = lambda e: ctr_cln.guardar_datos_clientes(e, True)
     formulario.shadow = None
